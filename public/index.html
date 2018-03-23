@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>    
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">    
+
+    <!-- Bootstrap -->    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+
+    <title>MYVTMI.IM - Vouchers</title>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <style>
+    .g-recaptcha {
+        display: inline-block;
+    }
+    input {
+        margin-bottom: 6px;
+        margin-top: 6px;
+    }
+    .custom-control-label {
+        margin-left:5px;
+    }
+    </style>
+  </head>
+  <body>
+        <div class="container text-center">
+            <div class="py-5 text-center">
+                <img class="d-block mx-auto mb-4" src="/img/logo.png" alt="" style="width:300px;">                
+                <p class="lead">
+                    A MYVTMI.IM e Ôh, Barbeiro estão mais parceiras que nunca.
+                    Você faz a matrícula e ganha um corte de cabelo super especial (e/ ou)
+                    Você corta o cabelo e ganha uma semana de prática inteiramente grátis.
+                    Valide seu Voucher fazendo um check-in no local e pronto! 
+                </p>
+            </div>
+            <form class="form-signin">
+                <div class="row">
+                    <div class="offset-3 col-6 text-center">                                    
+                        <h2 class="form-signin-heading">Agende sua semana de aula grátis</h2>
+                        <label for="inputEmail" class="sr-only">Nome Completo</label>
+                        <input type="text" id="inputName" class="form-control" placeholder="Nome Completo" required autofocus />
+                        <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required />
+                        <div class="row">
+                            <div class="col-6">
+                                <input type="text" id="inputCPF" class="form-control" placeholder="CPF" required />
+                            </div>
+                            <div class="col-6">
+                                <input type="phone" id="inputPhone" class="form-control" placeholder="Telefone" required />
+                            </div>
+                        </div>
+                        <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram" required />
+
+                        <h6>Preferência de Agendamento</h6>
+                        <div class="row text-left">
+                            <div class="col-4">                                
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Segunda</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Terça</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Quarta</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Quinta</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Sexta</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Sábado</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Manhã</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Tarde</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Noite</label>
+                                    </div>
+                                </div>                                
+                            </div>
+                            <div class="col-4">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Barra, Península/ O2 </label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Ipanema, Vitrine </label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input type="checkbox" class="custom-control-input" id="same-address">
+                                        <label class="custom-control-label" for="same-address">Méier, Medina</label>
+                                    </div>
+                                </div>                                
+                            </div>
+                        </div>
+                        
+
+                        <label for="inputPassword" class="sr-only">Password</label>                        
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="offset-3 col-6 text-center">
+                        <div class="g-recaptcha" data-sitekey="6LdAZE4UAAAAAJTkr2t8YiowAyPRmqshFhbOeQry"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="offset-3 col-6 text-center">
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Quero agendar minhas aulas grátis!</button>
+                    </div>
+                </div>
+            </form>                                                   
+            <footer class="my-5 pt-5 text-muted text-center text-small">
+                <div class="row">
+                    <div class="col-4 text-center">
+                        <strong>Barra</strong>, Península/ O2 
+                    </div>
+                    <div class="col-4 text-center">
+                        <strong>Ipanema</strong>, Vitrine de Ipanema 
+                    </div>
+                    <div class="col-4 text-center">
+                        <strong>Meier</strong>, Medina
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <a href="phone:(21)99963-6988">
+                            <img src="img/phone.png" alt="(021)99963-6988" title="(021)99963-6988" style="width:150px"/>
+                        </a>
+                    </div>
+                </div>
+                <p class="mb-1">&copy; 2018-2019 MYVTMI.IM</p>
+                <ul class="list-inline">                    
+                    <li class="list-inline-item"><a href="mailto:moychiyausi.myvt@gmail.com">Suporte</a></li>
+                </ul>
+            </footer>
+
+        </div> <!-- /container -->
+
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "name": "myvtmiim_voucher",
+  "version": "0.0.1",
+  "description": "Small website to let users get vouchers for myvtmi.im sessions",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thluiz/myvtmiim_voucher.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "api",
+    "vouchers"
+  ],
+  "author": "Thiago \"Moy Chi Yau Si\" Silva <moychiyausi.myvt@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thluiz/myvtmiim_voucher/issues"
+  },
+  "homepage": "https://github.com/thluiz/myvtmiim_voucher#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-recaptcha": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^9.6.0",
+    "dotenv": "^5.0.1"
+  }
+}
