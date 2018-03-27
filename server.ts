@@ -123,4 +123,4 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-app.listen(process.env.PORT || 27577, () => console.log('Voucher app listening on port 3000!'))
+app.listen(process.env.PORT || 27577, () => console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `))
