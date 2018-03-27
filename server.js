@@ -13,7 +13,16 @@ var Recaptcha = require('express-recaptcha');
 var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SITE_SECRET);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.get('/', function (req, res) {
+app.get("/", function (req, res) {
+    res.redirect('http://myvt.org');
+});
+app.get("/sistema", function (req, res) {
+    res.redirect("https://myvtmiim.azurewebsites.net");
+});
+app.get("/sat", function (req, res) {
+    res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/");
+});
+app.get('/voucher/:origin?', function (req, res) {
     var locals = {
         captcha: recaptcha.render(),
         branches: branches
@@ -85,5 +94,5 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
-app.listen(process.env.PORT || 3000, function () { return console.log('Voucher app listening on port 3000!'); });
+app.listen(process.env.PORT || 27577, function () { return console.log('Voucher app listening on port 3000!'); });
 //# sourceMappingURL=server.js.map

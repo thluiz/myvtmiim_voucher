@@ -20,7 +20,21 @@ var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPT
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/', function(req, res) {    
+
+app.get("/", (req, res) => { 
+    res.redirect('http://myvt.org');
+});
+  
+app.get("/sistema", (req, res) => {
+res.redirect("https://myvtmiim.azurewebsites.net");
+});
+
+app.get("/sat", (req, res) => {
+res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
+});
+
+
+app.get('/voucher/:origin?', function(req, res) {    
     let locals = {         
       captcha: recaptcha.render(),
       branches 
@@ -32,7 +46,7 @@ app.post('/voucher', function(req, res) {
     try {
         recaptcha.verify(req, function(error, data){            
             var voucher = req.body;
-                              
+
             let validation = validateVoucherRequest(error, voucher);                    
 
             if (!validation.success) {        
@@ -109,4 +123,4 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-app.listen(process.env.PORT || 3000, () => console.log('Voucher app listening on port 3000!'))
+app.listen(process.env.PORT || 27577, () => console.log('Voucher app listening on port 3000!'))
