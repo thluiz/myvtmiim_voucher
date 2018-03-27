@@ -1,4 +1,5 @@
 require('dotenv').load();
+var axios = require('axios');
 var express = require('express');
 var bodyParser = require('body-parser');
 var pub = __dirname + '/public';
@@ -38,8 +39,15 @@ app.post('/voucher', function (req, res) {
                 res.json(validation);
                 return;
             }
-            res.json({
-                success: true
+            postVoucher(voucher, function () {
+                res.json({
+                    success: true
+                });
+            }, function (error) {
+                res.json({
+                    success: false,
+                    errors: error
+                });
             });
         });
     }
@@ -50,6 +58,21 @@ app.post('/voucher', function (req, res) {
         });
     }
 });
+function postVoucher(voucher, onSuccess, onError) {
+    try {
+        console.log(process.env.CREATE_VOUCHER_API);
+        axios.post(process.env.CREATE_VOUCHER_API, voucher)
+            .then(function (response) {
+            onSuccess();
+        })
+            .catch(function (error) {
+            onError(error);
+        });
+    }
+    catch (error) {
+        onError(error);
+    }
+}
 function validateVoucherRequest(recaptchaError, voucher) {
     var errors = [];
     if (recaptchaError) {

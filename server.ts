@@ -1,5 +1,6 @@
 require('dotenv').load();
 
+var axios = require('axios');
 var express = require('express');
 var bodyParser = require('body-parser');
 var pub = __dirname + '/public';
@@ -26,11 +27,11 @@ app.get("/", (req, res) => {
 });
   
 app.get("/sistema", (req, res) => {
-res.redirect("https://myvtmiim.azurewebsites.net");
+    res.redirect("https://myvtmiim.azurewebsites.net");
 });
 
 app.get("/sat", (req, res) => {
-res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
+    res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
 });
 
 
@@ -54,9 +55,17 @@ app.post('/voucher', function(req, res) {
                 return;    
             }
             
-            res.json({
-                success: true        
-            });
+            postVoucher(voucher, 
+            () => {
+                res.json({
+                    success: true        
+                })
+            }, (error) => {
+                res.json({ 
+                    success: false,
+                    errors: error
+                })
+            });                        
         });            
     } catch (error) {
         res.json({
@@ -65,6 +74,22 @@ app.post('/voucher', function(req, res) {
         });
     }    
 });
+
+function postVoucher(voucher, onSuccess, onError) {
+
+    try {
+        console.log(process.env.CREATE_VOUCHER_API);
+        axios.post(process.env.CREATE_VOUCHER_API, voucher)
+        .then(function (response) {
+            onSuccess();
+        })
+        .catch(function (error) {
+            onError(error);
+        });
+    } catch (error) {
+        onError(error);
+    }         
+}
 
 function validateVoucherRequest(recaptchaError, voucher) {
     let errors = [];
