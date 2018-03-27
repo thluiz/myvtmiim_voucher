@@ -1,0 +1,111 @@
+<%- contentFor('title') %>
+MYVTMI.IM - Vouchers
+
+<%- contentFor('header') %>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<style>
+.g-recaptcha {
+    display: inline-block;
+}
+input {
+    margin-bottom: 6px;
+    margin-top: 6px;
+}
+.custom-control-label {
+    margin-left:5px;
+}
+label {
+    font-weight: bold;
+    margin:0;
+    padding:0;
+    font-size: 12px;
+}
+h6 {
+    margin-top:1em;
+    margin-bottom:0;
+}
+</style>
+
+
+<%- contentFor('body') %>
+<form class="form-signin">
+    <div class="row">
+        <div class="col-12 offset-md-3 col-md-6 text-center">                                    
+            <h2 class="form-signin-heading">Agende sua semana de aula grátis</h2>
+            <label for="inputEmail" class="sr-only">Nome Completo</label>
+            <input type="text" id="inputName" class="form-control" placeholder="Nome Completo" required autofocus />
+            <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required />
+            <div class="row">
+                <div class="col-6">
+                    <input type="text" id="inputCPF" class="form-control" placeholder="CPF" required />
+                </div>
+                <div class="col-6">
+                    <input type="phone" id="inputPhone" class="form-control" placeholder="Telefone" required />
+                </div>
+            </div>
+            <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram" required />
+
+            <h6>Preferências de Agendamento</h6>
+            <div class="row">
+                <div class="col-12 text-left">
+                    <label for="inputUnit">Unidade preferencial</label>
+                    <select style="width:100%" class="form-control" id="inputUnit" required>
+                        <option> Selecione a unidade preferencial</option>
+                        <% branches.forEach(function(branch) { %>                                
+                            <option value="<%= branch.id %>"><%= branch.name %></option>                                                            
+                        <% }); %>                        
+                    </select>
+                </div>
+            </div>
+            <!-- div class="row text-left">
+                
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <input type="checkbox" class="custom-control-input" id="same-address">
+                            <label class="custom-control-label" for="same-address">Manhã</label>
+                        </div>
+                        <div class="col-12">
+                            <input type="checkbox" class="custom-control-input" id="same-address">
+                            <label class="custom-control-label" for="same-address">Tarde</label>
+                        </div>
+                        <div class="col-12">
+                            <input type="checkbox" class="custom-control-input" id="same-address">
+                            <label class="custom-control-label" for="same-address">Noite</label>
+                        </div>
+                    </div>                                
+                </div>
+            </div-->                                              
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 offset-md-3 col-md-6 text-center"  style="margin-top:20px;">
+            <%-captcha %>            
+        </div>
+    </div>
+    <div id="ErrorContainer" style="margin-top:20px;display:none">        
+        <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{:message}}
+        </div>
+    </div>
+    <div class="row">
+        <div class="offset-3 col-6 text-center" style="margin-top:20px;margin-bottom:20px">
+            <button class="btn btn-lg btn-primary btn-block"                 
+                id="submitField" type="button">Iniciar minha semana grátis!</button>
+        </div>
+    </div>
+    <div class="alert alert-success alert-dismissible" id="successMessage" style="display:none">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        Obrigado! Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.
+    </div>
+    <script id="errorTemplate" type="text/x-jsrender">
+        <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            {{:message}}
+        </div>
+    </script>
+</form>
+
+<%- contentFor('footer') %>
+<script src="/js/voucher.js"></script>
