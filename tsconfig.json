@@ -5,6 +5,7 @@
         "watch": true,
         "sourceMap": true,
         "types": ["node"],
+        "baseUrl": "/",
         "paths": {
             "*": [
                 "node_modules/*",

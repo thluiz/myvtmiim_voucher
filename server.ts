@@ -8,7 +8,7 @@ var app = express();
 var expressLayouts = require('express-ejs-layouts');
 var cpf = require('gerador-validador-cpf');
 
-let branches = require('./data/branches.json')
+let update_timer = null;
 
 app.use(express.static('public'));
 
@@ -21,7 +21,6 @@ var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPT
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-
 app.get("/", (req, res) => { 
     res.redirect('http://myvt.org');
 });
@@ -32,15 +31,6 @@ app.get("/sistema", (req, res) => {
 
 app.get("/sat", (req, res) => {
     res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
-});
-
-
-app.get('/voucher/:origin?', function(req, res) {    
-    let locals = {         
-      captcha: recaptcha.render(),
-      branches 
-    };
-    res.render('voucher', locals);
 });
 
 app.post('/voucher', function(req, res) {   
@@ -75,8 +65,34 @@ app.post('/voucher', function(req, res) {
     }    
 });
 
-function postVoucher(voucher, onSuccess, onError) {
+function getVoucherData() {    
+    if(update_timer) {
+        clearTimeout(update_timer);
+    }
 
+    update_timer = setTimeout(getVoucherData, process.env.VOUCHER_DATA_UPDATE_TIME);
+
+    try {
+        axios.get(process.env.GET_DATA_VOUCHER_API)
+        .then(function (response) {
+            let data = response.data[0];            
+            
+            app.get('/voucher/:origin?', function(req, res) {    
+                let locals = {         
+                    captcha: recaptcha.render(),
+                    voucher_data: data,
+                    data: JSON.stringify(data)
+                };
+                res.render('voucher', locals);
+            });
+        });
+    } catch (error) {
+        console.log(error);
+        return;
+    }    
+}
+
+function postVoucher(voucher, onSuccess, onError) {
     try {
         console.log(process.env.CREATE_VOUCHER_API);
         axios.post(process.env.CREATE_VOUCHER_API, voucher)
@@ -147,5 +163,7 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+
+getVoucherData();
 
 app.listen(process.env.PORT || 27577, () => console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `))

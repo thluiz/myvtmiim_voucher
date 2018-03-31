@@ -6,7 +6,7 @@ var pub = __dirname + '/public';
 var app = express();
 var expressLayouts = require('express-ejs-layouts');
 var cpf = require('gerador-validador-cpf');
-var branches = require('./data/branches.json');
+var update_timer = null;
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
@@ -22,13 +22,6 @@ app.get("/sistema", function (req, res) {
 });
 app.get("/sat", function (req, res) {
     res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/");
-});
-app.get('/voucher/:origin?', function (req, res) {
-    var locals = {
-        captcha: recaptcha.render(),
-        branches: branches
-    };
-    res.render('voucher', locals);
 });
 app.post('/voucher', function (req, res) {
     try {
@@ -58,6 +51,30 @@ app.post('/voucher', function (req, res) {
         });
     }
 });
+function getVoucherData() {
+    if (update_timer) {
+        clearTimeout(update_timer);
+    }
+    update_timer = setTimeout(getVoucherData, process.env.VOUCHER_DATA_UPDATE_TIME);
+    try {
+        axios.get(process.env.GET_DATA_VOUCHER_API)
+            .then(function (response) {
+            var data = response.data[0];
+            app.get('/voucher/:origin?', function (req, res) {
+                var locals = {
+                    captcha: recaptcha.render(),
+                    voucher_data: data,
+                    data: JSON.stringify(data)
+                };
+                res.render('voucher', locals);
+            });
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+}
 function postVoucher(voucher, onSuccess, onError) {
     try {
         console.log(process.env.CREATE_VOUCHER_API);
@@ -117,5 +134,6 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+getVoucherData();
 app.listen(process.env.PORT || 27577, function () { return console.log("Voucher app listening on port " + (process.env.PORT || 27577) + "! "); });
 //# sourceMappingURL=server.js.map

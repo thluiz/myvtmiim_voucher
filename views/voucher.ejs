@@ -48,34 +48,24 @@ h6 {
             <h6>Preferências de Agendamento</h6>
             <div class="row">
                 <div class="col-12 text-left">
-                    <label for="inputUnit">Unidade preferencial</label>
-                    <select style="width:100%" class="form-control" id="inputUnit" required>
+                    <label for="inputUnit">Núcleo preferencial</label>
+                    <select 
+                        onchange="changeBranch(this.value)"
+                        style="width:100%" 
+                        class="form-control" id="inputUnit" required>
                         <option> Selecione a unidade preferencial</option>
-                        <% branches.forEach(function(branch) { %>                                
+                        <% voucher_data.branches.forEach(function(branch) { %>                                
                             <option value="<%= branch.id %>"><%= branch.name %></option>                                                            
                         <% }); %>                        
                     </select>
                 </div>
-            </div>
-            <!-- div class="row text-left">
-                
-                <div class="col-4">
-                    <div class="row">
-                        <div class="col-12">
-                            <input type="checkbox" class="custom-control-input" id="same-address">
-                            <label class="custom-control-label" for="same-address">Manhã</label>
-                        </div>
-                        <div class="col-12">
-                            <input type="checkbox" class="custom-control-input" id="same-address">
-                            <label class="custom-control-label" for="same-address">Tarde</label>
-                        </div>
-                        <div class="col-12">
-                            <input type="checkbox" class="custom-control-input" id="same-address">
-                            <label class="custom-control-label" for="same-address">Noite</label>
-                        </div>
-                    </div>                                
+                <div class="col-12 text-left" id="schedule">
+                    <label for="inputUnit">Horário</label>
+                    <select style="width:100%" class="form-control" id="inputSchedule" required>
+                        <option>Selecione o horário preferencial</option>
+                    </select>
                 </div>
-            </div-->                                              
+            </div>                                            
         </div>
     </div>
     <div class="row">
@@ -109,3 +99,7 @@ h6 {
 
 <%- contentFor('footer') %>
 <script src="/js/voucher.js"></script>
+
+<script>
+    loadViewData(<%-data %>);    
+</script>
