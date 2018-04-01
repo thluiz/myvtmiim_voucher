@@ -12,8 +12,6 @@ function changeBranch(id) {
     .remove()
     .end()
 
-    console.log(data.branches);
-
     var branch = $.grep(data.branches, function(b) { return b.id == id })[0];
     
     $.each(branch.voucher_map, function(i, m) {
@@ -52,6 +50,7 @@ function sendData() {
     var phoneField = $('#inputPhone');
     var socialLinksField = $('#inputSocialLinks');
     var unitField = $('#inputUnit');
+    var scheduleField = $('#inputSchedule');
 
     var data = {
         name: nameField.val(),
@@ -60,6 +59,7 @@ function sendData() {
         phone: phoneField.val(),
         socialLinks: socialLinksField.val(),
         unit: unitField.val(),
+        schedule: $('#inputSchedule').val(),
         "g-recaptcha-response": $('#g-recaptcha-response').val() 
     };
 

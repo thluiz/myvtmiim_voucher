@@ -153,6 +153,10 @@ function validateVoucherRequest(recaptchaError, voucher) {
         errors[errors.length] = "Selecione sua unidade preferencial";
     }
 
+    if(!voucher.schedule || voucher.schedule < 0) {
+        errors[errors.length] = "Selecione o agendamento";
+    }
+
     return {
         success: errors.length <= 0,
         errors: errors
