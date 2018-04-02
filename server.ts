@@ -86,7 +86,7 @@ function getVoucherData() {
                 const vouchers = (data.vouchers as any[]).filter(v => v.url === req.params.origin);
                 
                 if(vouchers.length > 0) {
-                    voucher = vouchers[0];
+                    voucher = vouchers[0];                    
                     voucher_id = vouchers[0].id;
                     voucher.formatted_text = converter.makeHtml(voucher.header_text);
                 }
@@ -135,7 +135,7 @@ function validateVoucherRequest(recaptchaError, voucher) {
             success: false,
             errors: errors
         }
-    }    
+    }        
 
     if(!voucher.name || voucher.name.length < 5) {
         errors[errors.length] = "Informe seu nome completo";
@@ -147,6 +147,13 @@ function validateVoucherRequest(recaptchaError, voucher) {
 
     if(voucher.email.length < 3) {
         errors[errors.length] = "Informe o e-mail";
+    }
+
+    if(voucher.inputQuestion 
+        && voucher.inputQuestion.length > 0
+        && (voucher.additionalAnswer == null || voucher.additionalAnswer.length < 3)
+    ) {
+        errors[errors.length] = `Responda a pergunta: '${voucher.inputQuestion}'`;
     }
 
     if(voucher.email.length > 3 && !validateEmail(voucher.email)) {

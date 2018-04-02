@@ -123,6 +123,11 @@ function validateVoucherRequest(recaptchaError, voucher) {
     if (voucher.email.length < 3) {
         errors[errors.length] = "Informe o e-mail";
     }
+    if (voucher.inputQuestion
+        && voucher.inputQuestion.length > 0
+        && (voucher.additionalAnswer == null || voucher.additionalAnswer.length < 3)) {
+        errors[errors.length] = "Responda a pergunta: '" + voucher.inputQuestion + "'";
+    }
     if (voucher.email.length > 3 && !validateEmail(voucher.email)) {
         errors[errors.length] = "Informe um e-mail válido";
     }

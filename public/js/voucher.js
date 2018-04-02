@@ -52,6 +52,8 @@ function sendData() {
     var unitField = $('#inputUnit');
     var scheduleField = $('#inputSchedule');
     var voucherField = $('#inputVoucher');
+    var additionalAnswerField = $('#inputAdditionalAnswer');
+    var questionField = $('#inputQuestion');
 
     var data = {
         name: nameField.val(),
@@ -61,9 +63,14 @@ function sendData() {
         socialLinks: socialLinksField.val(),
         unit: unitField.val(),
         schedule: $('#inputSchedule').val(),
-        voucher_id: voucherField.val(),
+        voucher_id: voucherField.val(),        
         "g-recaptcha-response": $('#g-recaptcha-response').val() 
     };
+
+    if(additionalAnswerField.length > 0) {
+        data.inputQuestion = questionField.val();
+        data.additionalAnswer = additionalAnswerField.val();
+    }
 
     $('#ErrorContainer').hide('fade');
     $('#ErrorContainer').html('');
