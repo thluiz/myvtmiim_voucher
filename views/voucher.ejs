@@ -32,6 +32,14 @@ h6 {
     <div class="row">
         <div class="col-12 offset-md-3 col-md-6 text-center">                                    
             <h2 class="form-signin-heading">Agende sua semana de aula grátis</h2>
+            <% if(voucher != null && voucher.header_text != null 
+                    && voucher.formatted_text != null 
+                    && voucher.formatted_text.length > 0) { %>
+
+                <div style="text-align:left"><%-voucher.formatted_text %></div>
+
+            <% }; %>
+
             <label for="inputEmail" class="sr-only">Nome Completo</label>
             <input type="text" id="inputName" class="form-control" placeholder="Nome Completo" required autofocus maxlength="200" />
             <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required maxlength="100"/>
@@ -93,6 +101,9 @@ h6 {
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         Obrigado! Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.
     </div>
+    
+    <input type="hidden" id="inputVoucher" value="<%- voucher_id %>" />
+
     <script id="errorTemplate" type="text/x-jsrender">
         <div class="alert alert-danger alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>

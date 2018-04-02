@@ -7,6 +7,8 @@ var pub = __dirname + '/public';
 var app = express();
 var expressLayouts = require('express-ejs-layouts');
 var cpf = require('gerador-validador-cpf');
+var showdown  = require('showdown');
+var converter = new showdown.Converter();
 
 let update_timer = null;
 
@@ -78,9 +80,23 @@ function getVoucherData() {
             let data = response.data[0];            
             
             app.get('/voucher/:origin?', function(req, res) {    
+                let voucher_id = 1;
+                let voucher = { formatted_text: "", header_text: ""};
+                
+                const vouchers = (data.vouchers as any[]).filter(v => v.url === req.params.origin);
+                
+                if(vouchers.length > 0) {
+                    voucher = vouchers[0];
+                    voucher_id = vouchers[0].id;
+                    voucher.formatted_text = converter.makeHtml(voucher.header_text);
+                }
+
                 let locals = {         
                     captcha: recaptcha.render(),
+                    origin: req.params.origin,
                     voucher_data: data,
+                    voucher_id: voucher_id,
+                    voucher,
                     data: JSON.stringify(data)
                 };
                 res.render('voucher', locals);

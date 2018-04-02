@@ -51,6 +51,7 @@ function sendData() {
     var socialLinksField = $('#inputSocialLinks');
     var unitField = $('#inputUnit');
     var scheduleField = $('#inputSchedule');
+    var voucherField = $('#inputVoucher');
 
     var data = {
         name: nameField.val(),
@@ -60,6 +61,7 @@ function sendData() {
         socialLinks: socialLinksField.val(),
         unit: unitField.val(),
         schedule: $('#inputSchedule').val(),
+        voucher_id: voucherField.val(),
         "g-recaptcha-response": $('#g-recaptcha-response').val() 
     };
 
