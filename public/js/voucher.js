@@ -19,7 +19,7 @@ function changeBranch(id) {
         description += m.title ? m.title + ' - ' : '';
                 
         $.each(m.week_days, function(z, w) { 
-            if(z == m.week_days.length -1) {
+            if(z == m.week_days.length -1 && m.week_days.length > 1) {
                 description += " e ";
             }
 
