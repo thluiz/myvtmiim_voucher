@@ -9,6 +9,7 @@ var cpf = require('gerador-validador-cpf');
 var showdown = require('showdown');
 var converter = new showdown.Converter();
 var update_timer = null;
+var voucher_data = null;
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
@@ -24,6 +25,34 @@ app.get("/sistema", function (req, res) {
 });
 app.get("/sat", function (req, res) {
     res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/");
+});
+app.get("/update_voucher", function (req, res) {
+    getVoucherData(function () {
+        res.send({ 'success': true });
+    });
+});
+app.get('/voucher/:origin?', function (req, res) {
+    if (!voucher_data) {
+        res.send("awaiting for voucher");
+        return;
+    }
+    var voucher_id = 1;
+    var voucher = { formatted_text: "", header_text: "" };
+    var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === req.params.origin; });
+    if (vouchers.length > 0) {
+        voucher = vouchers[0];
+        voucher_id = vouchers[0].id;
+        voucher.formatted_text = converter.makeHtml(voucher.header_text);
+    }
+    var locals = {
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher: voucher,
+        data: JSON.stringify(voucher_data)
+    };
+    res.render('voucher', locals);
 });
 app.post('/voucher', function (req, res) {
     try {
@@ -53,34 +82,15 @@ app.post('/voucher', function (req, res) {
         });
     }
 });
-function getVoucherData() {
-    if (update_timer) {
-        clearTimeout(update_timer);
-    }
-    update_timer = setTimeout(getVoucherData, process.env.VOUCHER_DATA_UPDATE_TIME);
+function getVoucherData(callback) {
     try {
         axios.get(process.env.GET_DATA_VOUCHER_API)
             .then(function (response) {
             var data = response.data[0];
-            app.get('/voucher/:origin?', function (req, res) {
-                var voucher_id = 1;
-                var voucher = { formatted_text: "", header_text: "" };
-                var vouchers = data.vouchers.filter(function (v) { return v.url === req.params.origin; });
-                if (vouchers.length > 0) {
-                    voucher = vouchers[0];
-                    voucher_id = vouchers[0].id;
-                    voucher.formatted_text = converter.makeHtml(voucher.header_text);
-                }
-                var locals = {
-                    captcha: recaptcha.render(),
-                    origin: req.params.origin,
-                    voucher_data: data,
-                    voucher_id: voucher_id,
-                    voucher: voucher,
-                    data: JSON.stringify(data)
-                };
-                res.render('voucher', locals);
-            });
+            voucher_data = data;
+            if (callback) {
+                callback();
+            }
         });
     }
     catch (error) {

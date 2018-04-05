@@ -11,6 +11,7 @@ var showdown  = require('showdown');
 var converter = new showdown.Converter();
 
 let update_timer = null;
+let voucher_data = null;
 
 app.use(express.static('public'));
 
@@ -33,6 +34,41 @@ app.get("/sistema", (req, res) => {
 
 app.get("/sat", (req, res) => {
     res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
+});
+
+app.get("/update_voucher", (req, res) => {
+    getVoucherData(() => {
+        res.send({ 'success': true })
+    });
+});
+
+app.get('/voucher/:origin?', function(req, res) {    
+    if(!voucher_data) {
+        res.send("awaiting for voucher");
+        return;
+    }
+
+    let voucher_id = 1;
+    let voucher = { formatted_text: "", header_text: ""};
+    
+    const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === req.params.origin);
+    
+    if(vouchers.length > 0) {
+        voucher = vouchers[0];                    
+        voucher_id = vouchers[0].id;
+        voucher.formatted_text = converter.makeHtml(voucher.header_text);
+    }
+
+    let locals = {         
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher,
+        data: JSON.stringify(voucher_data)
+    };
+
+    res.render('voucher', locals);
 });
 
 app.post('/voucher', function(req, res) {   
@@ -67,40 +103,16 @@ app.post('/voucher', function(req, res) {
     }    
 });
 
-function getVoucherData() {    
-    if(update_timer) {
-        clearTimeout(update_timer);
-    }
-
-    update_timer = setTimeout(getVoucherData, process.env.VOUCHER_DATA_UPDATE_TIME);
-
+function getVoucherData(callback?) {    
     try {
         axios.get(process.env.GET_DATA_VOUCHER_API)
         .then(function (response) {
             let data = response.data[0];            
-            
-            app.get('/voucher/:origin?', function(req, res) {    
-                let voucher_id = 1;
-                let voucher = { formatted_text: "", header_text: ""};
-                
-                const vouchers = (data.vouchers as any[]).filter(v => v.url === req.params.origin);
-                
-                if(vouchers.length > 0) {
-                    voucher = vouchers[0];                    
-                    voucher_id = vouchers[0].id;
-                    voucher.formatted_text = converter.makeHtml(voucher.header_text);
-                }
+            voucher_data = data;
 
-                let locals = {         
-                    captcha: recaptcha.render(),
-                    origin: req.params.origin,
-                    voucher_data: data,
-                    voucher_id: voucher_id,
-                    voucher,
-                    data: JSON.stringify(data)
-                };
-                res.render('voucher', locals);
-            });
+            if(callback) {
+                callback();
+            }
         });
     } catch (error) {
         console.log(error);
