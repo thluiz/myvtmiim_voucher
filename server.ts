@@ -38,13 +38,14 @@ app.get("/sat", (req, res) => {
 
 app.get("/update_voucher", (req, res) => {
     getVoucherData(() => {
-        res.send({ 'success': true })
+        res.send({ 'success': true });
     });
 });
 
 app.get('/voucher/:origin?', function(req, res) {    
     if(!voucher_data) {
         res.send("awaiting for voucher");
+        setTimeout(getVoucherData, 30000);
         return;
     }
 

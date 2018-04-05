@@ -34,6 +34,7 @@ app.get("/update_voucher", function (req, res) {
 app.get('/voucher/:origin?', function (req, res) {
     if (!voucher_data) {
         res.send("awaiting for voucher");
+        setTimeout(getVoucherData, 30000);
         return;
     }
     var voucher_id = 1;

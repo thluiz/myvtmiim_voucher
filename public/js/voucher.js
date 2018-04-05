@@ -74,7 +74,8 @@ function sendData() {
 
     $('#ErrorContainer').hide('fade');
     $('#ErrorContainer').html('');
-        
+    $('#submitField').hide();
+    $('#sendingButton').show();
     $.ajax({
         type: "post",
         url: "/voucher",
@@ -104,11 +105,14 @@ function sendData() {
                 });
 
                 $('#ErrorContainer').show('fade');
+                $('#sendingButton').hide('fade', function() {
+                    $('#submitField').show('fade');
+                });    
                 return;
             }
             
-            $('#submitField').hide('fade', function() {
-                $('#successMessage').show('fade');
+            $('#sendingButton').hide('fade', function() {
+                $('#successMessage').show('fade');                
             });                
         }
     });    
