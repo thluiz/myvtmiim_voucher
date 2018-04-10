@@ -1,0 +1,54 @@
+<%- contentFor('title') %>
+MYVTMI.IM - Vouchers
+
+<%- contentFor('header') %>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<style>
+.g-recaptcha {
+    display: inline-block;
+}
+input {
+    margin-bottom: 6px;
+    margin-top: 6px;
+}
+.custom-control-label {
+    margin-left:5px;
+}
+label {
+    font-weight: bold;
+    margin:0;
+    padding:0;
+    font-size: 12px;
+}
+h6 {
+    margin-top:1em;
+    margin-bottom:0;
+}
+</style>
+
+
+<%- contentFor('body') %>
+<form class="form-signin">
+    <div class="row">
+        <div class="col-12 offset-md-3 col-md-6 text-center">   
+            <div style="text-align:left">                                             
+                <% if(voucher != null && voucher.final_text != null 
+                        && voucher.formatted_final_text != null 
+                        && voucher.formatted_final_text.length > 0) { %>
+
+                    <%-voucher.formatted_final_text %>
+
+                <% } else { %>                               
+                    <p style="font-weight:bold">Obrigado!</p>
+
+                    Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.            
+                <% } %>
+            </div>
+        </div>        
+    </div>
+</form>
+
+<%- contentFor('footer') %>
+<script>
+    
+</script>

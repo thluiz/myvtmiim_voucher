@@ -55,6 +55,30 @@ app.get('/voucher/:origin?', function (req, res) {
     };
     res.render('voucher', locals);
 });
+app.get('/voucher_final/:id?', function (req, res) {
+    if (!voucher_data) {
+        res.send("awaiting for voucher");
+        setTimeout(getVoucherData, 30000);
+        return;
+    }
+    var voucher_id = 1;
+    var voucher = { formatted_text: "", header_text: "", final_text: "", formatted_final_text: "" };
+    var vouchers = voucher_data.vouchers.filter(function (v) { return v.id == req.params.id; });
+    if (vouchers.length > 0) {
+        voucher = vouchers[0];
+        voucher_id = vouchers[0].id;
+        voucher.formatted_final_text = converter.makeHtml(voucher.final_text);
+    }
+    var locals = {
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher: voucher,
+        data: JSON.stringify(voucher_data)
+    };
+    res.render('voucher_final', locals);
+});
 app.post('/voucher', function (req, res) {
     try {
         recaptcha.verify(req, function (error, data) {
@@ -142,7 +166,7 @@ function validateVoucherRequest(recaptchaError, voucher) {
     if (voucher.email.length > 3 && !validateEmail(voucher.email)) {
         errors[errors.length] = "Informe um e-mail válido";
     }
-    if (!cpf.validate(voucher.cpf)) {
+    if (voucher.cpf && voucher.cpf.length > 0 && !cpf.validate(voucher.cpf)) {
         errors[errors.length] = "Informe um CPF válido";
     }
     if (!voucher.phone || voucher.phone.length <= 8) {

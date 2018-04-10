@@ -111,8 +111,8 @@ function sendData() {
                 return;
             }
             
-            $('#sendingButton').hide('fade', function() {
-                $('#successMessage').show('fade');                
+            $('#sendingButton').hide('fade', function() {                
+                location.href = "/voucher_final" + (voucherField.val() > 0 ? "/" + voucherField.val() : ""); 
             });                
         }
     });    

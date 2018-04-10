@@ -72,6 +72,36 @@ app.get('/voucher/:origin?', function(req, res) {
     res.render('voucher', locals);
 });
 
+app.get('/voucher_final/:id?', function(req, res) {    
+    if(!voucher_data) {
+        res.send("awaiting for voucher");
+        setTimeout(getVoucherData, 30000);
+        return;
+    }
+
+    let voucher_id = 1;
+    let voucher = { formatted_text: "", header_text: "", final_text: "", formatted_final_text: ""};
+    
+    const vouchers = (voucher_data.vouchers as any[]).filter(v => v.id == req.params.id);
+    
+    if(vouchers.length > 0) {        
+        voucher = vouchers[0];                    
+        voucher_id = vouchers[0].id;
+        voucher.formatted_final_text = converter.makeHtml(voucher.final_text);
+    }
+
+    let locals = {         
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher,
+        data: JSON.stringify(voucher_data)
+    };
+
+    res.render('voucher_final', locals);
+});
+
 app.post('/voucher', function(req, res) {   
     try {
         recaptcha.verify(req, function(error, data){            
@@ -173,7 +203,7 @@ function validateVoucherRequest(recaptchaError, voucher) {
         errors[errors.length] = "Informe um e-mail válido";
     }
 
-    if(!cpf.validate(voucher.cpf)) {
+    if(voucher.cpf && voucher.cpf.length > 0 && !cpf.validate(voucher.cpf)) {
         errors[errors.length] = "Informe um CPF válido";
     }
 
