@@ -99,18 +99,19 @@ function sendData() {
                 $.each(errors, function(i, e) {
                     if(e === "invalid-input-response") {
                         e = "Por favor, responda ao captcha";
-                    } else if(e === "timeout-or-duplicate") {
-                        grecaptcha.reset();
+                    } else if(e === "timeout-or-duplicate") {                        
                         e = "Por favor, Responda ao reCaptcha novamente"
                     }
                     $('#ErrorContainer').append(tmpl.render({message: e}));
-                });
+                });                
 
+                grecaptcha.reset();
+                
                 $('#ErrorContainer').show('fade');
                 $('#sendingButton').hide('fade', function() {
                     $('#submitField').show('fade');                    
                 });    
-                
+
                 $('#sendingButtonMobile').hide('fade', function() {
                     $('#submitFieldMobile').show('fade');                    
                 });    
