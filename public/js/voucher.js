@@ -108,7 +108,11 @@ function sendData() {
 
                 $('#ErrorContainer').show('fade');
                 $('#sendingButton').hide('fade', function() {
-                    $('#submitField').show('fade');
+                    $('#submitField').show('fade');                    
+                });    
+                
+                $('#sendingButtonMobile').hide('fade', function() {
+                    $('#submitFieldMobile').show('fade');                    
                 });    
                 return;
             }
