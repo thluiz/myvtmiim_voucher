@@ -75,7 +75,9 @@ function sendData() {
     $('#ErrorContainer').hide('fade');
     $('#ErrorContainer').html('');
     $('#submitField').hide();
+    $('#submitFieldMobile').hide();
     $('#sendingButton').show();
+    $('#sendingButtonMobile').show();
     $.ajax({
         type: "post",
         url: "/voucher",
@@ -120,5 +122,6 @@ function sendData() {
 
 $(function() {    
     $('#submitField').click(sendData);
+    $('#submitFieldMobile').click(sendData);
 });
 
