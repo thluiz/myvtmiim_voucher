@@ -12,6 +12,7 @@ var converter = new showdown.Converter();
 
 let update_timer = null;
 let voucher_data = null;
+let invite_data = null;
 
 app.use(express.static('public'));
 
@@ -42,6 +43,58 @@ app.get("/update_voucher", (req, res) => {
     });
 });
 
+app.get("/update_invites", (req, res) => {
+    getInvitesData(() => {
+        res.send({ 'success': true });
+    });
+});
+
+app.get('/voucher/membros2/:invite?', function(req, res) {
+    if(!voucher_data) {                
+        getVoucherData(() => {
+            res.send("Looking for vouchers. Please try again");
+        });
+        return;
+    }
+
+    if(!invite_data) {        
+        getInvitesData(() => {
+            res.send("Looking for invites. Please try again");
+        });
+        return;
+    }
+
+    let invite_id = 0;
+    let voucher_id = 1;
+    let voucher = { formatted_text: "", header_text: ""};
+    let invite: any = { indicator: "", key: "", indicated: "" };
+    
+    const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros2');
+    const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string).toLocaleUpperCase());
+    
+    if(invites.length > 0) {
+        invite = invites[0];                    
+        invite_id = invites[0].id;
+    }
+
+    if(vouchers.length > 0) {
+        voucher = vouchers[0];                    
+        voucher_id = vouchers[0].id;
+        voucher.formatted_text = converter.makeHtml(replaceInvites(voucher.header_text, invite));
+    }
+
+    let locals = {         
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher, invite,
+        data: JSON.stringify(voucher_data)
+    };
+
+    res.render('voucher2', locals);
+});
+
 app.get('/voucher/:origin?', function(req, res) {    
     if(!voucher_data) {
         res.send("awaiting for voucher");
@@ -51,6 +104,7 @@ app.get('/voucher/:origin?', function(req, res) {
 
     let voucher_id = 1;
     let voucher = { formatted_text: "", header_text: ""};
+    let invite: any = { indicator: "", key: "", indicated: "" };
     
     const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === req.params.origin);
     
@@ -65,7 +119,7 @@ app.get('/voucher/:origin?', function(req, res) {
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher,
+        voucher, invite,
         data: JSON.stringify(voucher_data)
     };
 
@@ -133,6 +187,38 @@ app.post('/voucher', function(req, res) {
         });
     }    
 });
+
+function replaceInvites(text, invite_data) {
+    let str = text;
+    let replaces : { key: string, value: string}[] = [];
+
+    replaces.push({ key: "indicador", value: invite_data.indicator }); 
+    replaces.push({ key: "indicado", value: invite_data.indicated });
+
+    for(let i = 0; i < replaces.length; i++) {
+        let r = replaces[i];
+        str = str.replace(`{{${r.key}}}`, r.value)
+    }
+
+    return str;
+}
+
+function getInvitesData(callback?) {    
+    try {
+        axios.get(process.env.GET_DATA_INVITES_API)
+        .then(function (response) {
+            let data = response.data;            
+            invite_data = data;
+
+            if(callback) {
+                callback();
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        return;
+    }    
+}
 
 function getVoucherData(callback?) {    
     try {
@@ -235,5 +321,6 @@ function validateEmail(email) {
 }
 
 getVoucherData();
+getInvitesData();
 
 app.listen(process.env.PORT || 27577, () => console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `))

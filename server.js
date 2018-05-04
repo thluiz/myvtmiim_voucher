@@ -10,6 +10,7 @@ var showdown = require('showdown');
 var converter = new showdown.Converter();
 var update_timer = null;
 var voucher_data = null;
+var invite_data = null;
 app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(expressLayouts);
@@ -31,6 +32,49 @@ app.get("/update_voucher", function (req, res) {
         res.send({ 'success': true });
     });
 });
+app.get("/update_invites", function (req, res) {
+    getInvitesData(function () {
+        res.send({ 'success': true });
+    });
+});
+app.get('/voucher/membros2/:invite?', function (req, res) {
+    if (!voucher_data) {
+        getVoucherData(function () {
+            res.send("Looking for vouchers. Please try again");
+        });
+        return;
+    }
+    if (!invite_data) {
+        getInvitesData(function () {
+            res.send("Looking for invites. Please try again");
+        });
+        return;
+    }
+    var invite_id = 0;
+    var voucher_id = 1;
+    var voucher = { formatted_text: "", header_text: "" };
+    var invite = { indicator: "", key: "", indicated: "" };
+    var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros2'; });
+    var invites = invite_data.filter(function (v) { return v.key === req.params.invite.toLocaleUpperCase(); });
+    if (invites.length > 0) {
+        invite = invites[0];
+        invite_id = invites[0].id;
+    }
+    if (vouchers.length > 0) {
+        voucher = vouchers[0];
+        voucher_id = vouchers[0].id;
+        voucher.formatted_text = converter.makeHtml(replaceInvites(voucher.header_text, invite));
+    }
+    var locals = {
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher: voucher, invite: invite,
+        data: JSON.stringify(voucher_data)
+    };
+    res.render('voucher2', locals);
+});
 app.get('/voucher/:origin?', function (req, res) {
     if (!voucher_data) {
         res.send("awaiting for voucher");
@@ -39,6 +83,7 @@ app.get('/voucher/:origin?', function (req, res) {
     }
     var voucher_id = 1;
     var voucher = { formatted_text: "", header_text: "" };
+    var invite = { indicator: "", key: "", indicated: "" };
     var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === req.params.origin; });
     if (vouchers.length > 0) {
         voucher = vouchers[0];
@@ -50,7 +95,7 @@ app.get('/voucher/:origin?', function (req, res) {
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher: voucher,
+        voucher: voucher, invite: invite,
         data: JSON.stringify(voucher_data)
     };
     res.render('voucher', locals);
@@ -107,6 +152,33 @@ app.post('/voucher', function (req, res) {
         });
     }
 });
+function replaceInvites(text, invite_data) {
+    var str = text;
+    var replaces = [];
+    replaces.push({ key: "indicador", value: invite_data.indicator });
+    replaces.push({ key: "indicado", value: invite_data.indicated });
+    for (var i = 0; i < replaces.length; i++) {
+        var r = replaces[i];
+        str = str.replace("{{" + r.key + "}}", r.value);
+    }
+    return str;
+}
+function getInvitesData(callback) {
+    try {
+        axios.get(process.env.GET_DATA_INVITES_API)
+            .then(function (response) {
+            var data = response.data;
+            invite_data = data;
+            if (callback) {
+                callback();
+            }
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return;
+    }
+}
 function getVoucherData(callback) {
     try {
         axios.get(process.env.GET_DATA_VOUCHER_API)
@@ -191,5 +263,6 @@ function validateEmail(email) {
     return re.test(email);
 }
 getVoucherData();
+getInvitesData();
 app.listen(process.env.PORT || 27577, function () { return console.log("Voucher app listening on port " + (process.env.PORT || 27577) + "! "); });
 //# sourceMappingURL=server.js.map

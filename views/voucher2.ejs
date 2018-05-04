@@ -82,10 +82,13 @@ h6 {
             <% if(voucher != null && voucher.additional_question != null 
                     && voucher.additional_question.length > 0) { %>
 
-                <h6><%-voucher.additional_question %>  </h6>                
+                <h6><%-voucher.additional_question %>  </h6>
+                <input type="hidden" id="inputQuestion" value="<%- voucher.additional_question %>" />
                 <div class="row">
                     <div class="col-12 text-left">
-                        <input type="text" id="inputAdditionalAnswer" class="form-control" placeholder="" required maxlength="400" />
+                        <input type="text" id="inputAdditionalAnswer" 
+                        class="form-control" placeholder="" required maxlength="400"
+                        value="<%-invite.indicator %>" />
                     </div>
                 </div>
             <% }; %>
@@ -150,9 +153,6 @@ h6 {
             {{:message}}
         </div>
     </script>
-
-    <input type="hidden" id="inputQuestion" value="<%- voucher.additional_question %>" />
-    <input type="text" id="inputInviteKey" value="<%- invite.identifier %>" />
 </form>
 
 <%- contentFor('footer') %>
