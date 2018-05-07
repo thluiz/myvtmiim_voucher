@@ -54,7 +54,8 @@ function sendData() {
     var voucherField = $('#inputVoucher');
     var additionalAnswerField = $('#inputAdditionalAnswer');
     var questionField = $('#inputQuestion');
-
+    var inviteKeyField = $('#inputInviteKey');
+    
     var data = {
         name: nameField.val(),
         email: emailField.val(),
@@ -63,7 +64,8 @@ function sendData() {
         socialLinks: socialLinksField.val(),
         unit: unitField.val(),
         schedule: $('#inputSchedule').val(),
-        voucher_id: voucherField.val(),        
+        voucher_id: voucherField.val(), 
+        invite: inviteKeyField.val(),  
         "g-recaptcha-response": $('#g-recaptcha-response').val() 
     };
 
@@ -128,5 +130,8 @@ function sendData() {
 $(function() {    
     $('#submitField').click(sendData);
     $('#submitFieldMobile').click(sendData);
+    if($('#inputUnit').val() > 0) {
+        changeBranch($('#inputUnit').val());
+    }
 });
 

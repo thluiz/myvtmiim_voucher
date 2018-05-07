@@ -47,16 +47,25 @@ h6 {
             <% }; %>
 
             <label for="inputEmail" class="sr-only">Nome Completo</label>
-            <input type="text" id="inputName" class="form-control" placeholder="Nome Completo" required autofocus maxlength="200" />            
+            <input type="text" id="inputName" class="form-control" 
+                value="<%- invite.indicated %>"
+                placeholder="Nome Completo" required 
+                autofocus maxlength="200" />            
             <div class="row">
                 <div class="col-6">                    
-                    <input type="email" id="inputEmail" class="form-control" placeholder="E-mail" required maxlength="100"/>
+                    <input type="email" id="inputEmail" class="form-control" 
+                    value="<%- email %>"
+                    placeholder="E-mail" required maxlength="100"/>
                 </div>
                 <div class="col-6">
-                    <input type="phone" id="inputPhone" class="form-control" placeholder="Telefone" required />
+                    <input type="phone" id="inputPhone" class="form-control" 
+                    value="<%- phone %>"
+                    placeholder="Telefone" required />
                 </div>
             </div>
-            <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram" required maxlength="100" />
+            <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram" 
+            value="<%- facebook %>"
+            required maxlength="100" />
 
             <h6>Preferências de Agendamento</h6>
             <div class="row">
@@ -68,7 +77,11 @@ h6 {
                         class="form-control" id="inputUnit" required>
                         <option> Selecione a unidade preferencial</option>
                         <% voucher_data.branches.forEach(function(branch) { %>                                
-                            <option value="<%= branch.id %>"><%= branch.name %></option>                                                            
+                            <% if(branch.id == invite.branch_id) { %>
+                                <option value="<%= branch.id %>" selected><%= branch.name %></option>
+                            <% } else { %>
+                                <option value="<%= branch.id %>"><%= branch.name %></option>
+                            <% }; %>                                                            
                         <% }); %>                        
                     </select>
                 </div>
@@ -146,7 +159,7 @@ h6 {
     </div>
     
     <input type="hidden" id="inputVoucher" value="<%- voucher_id %>" />
-    <input type="text" id="inputInviteKey" value="<%- invite.identifier %>" />
+    <input type="hidden" id="inputInviteKey" value="<%- invite.identifier %>" />
 
     <script id="errorTemplate" type="text/x-jsrender">
         <div class="alert alert-danger alert-dismissible">
@@ -154,11 +167,12 @@ h6 {
             {{:message}}
         </div>
     </script>
+
 </form>
 
 <%- contentFor('footer') %>
 <script src="/js/voucher.js"></script>
 
 <script>
-    loadViewData(<%-data %>);    
+    loadViewData(<%-data %>); 
 </script>

@@ -68,6 +68,9 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
     let voucher_id = 1;
     let voucher = { formatted_text: "", header_text: ""};
     let invite: any = { indicator: "", key: "", indicated: "" };
+    let facebook = "";
+    let email = "";
+    let phone = "";
     
     const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros2');
     const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string).toLocaleUpperCase());
@@ -75,6 +78,20 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
     if(invites.length > 0) {
         invite = invites[0];                    
         invite_id = invites[0].id;
+        
+        console.log(invite.contacts.find(ct => ct.contact_type == 1) != undefined);
+
+        if(invite.contacts.find(ct => ct.contact_type == 1) != undefined) {
+            email = invite.contacts.find(ct => ct.contact_type == 1).contact;
+        }
+
+        if(invite.contacts.find(ct => ct.contact_type == 4 || ct.contact_type == 5) != undefined) {
+            facebook = invite.contacts.find(ct => ct.contact_type == 4 || ct.contact_type == 5).contact;            
+        }
+
+        if(invite.contacts.find(ct => ct.contact_type == 2 || ct.contact_type == 3) != undefined) {
+            phone = invite.contacts.find(ct => ct.contact_type == 2 || ct.contact_type == 3).contact;                        
+        }
     }
 
     if(vouchers.length > 0) {
@@ -89,7 +106,8 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
         voucher_data: voucher_data,
         voucher_id: voucher_id,
         voucher, invite,
-        data: JSON.stringify(voucher_data)
+        data: JSON.stringify(voucher_data),
+        email, phone, facebook
     };
 
     res.render('voucher2', locals);
@@ -120,7 +138,7 @@ app.get('/voucher/:origin?', function(req, res) {
         voucher_data: voucher_data,
         voucher_id: voucher_id,
         voucher, invite,
-        data: JSON.stringify(voucher_data)
+        data: JSON.stringify(voucher_data)        
     };
 
     res.render('voucher', locals);
