@@ -14,33 +14,37 @@ function changeBranch(id) {
 
     var branch = $.grep(data.branches, function(b) { return b.id == id })[0];
     
-    $.each(branch.voucher_map, function(i, m) {
-        var description = '';
-        description += m.title ? m.title + ' - ' : '';
-                
-        $.each(m.week_days, function(z, w) { 
-            if(z == m.week_days.length -1 && m.week_days.length > 1) {
-                description += " e ";
-            }
+    if(branch.voucher_map) {
+        $.each(branch.voucher_map, function(i, m) {
+            var description = '';
+            description += m.title ? m.title + ' - ' : '';
+                    
+            $.each(m.week_days, function(z, w) { 
+                if(z == m.week_days.length -1 && m.week_days.length > 1) {
+                    description += " e ";
+                }
 
-            description += w.name;
+                description += w.name;
 
-            if(m.week_days.length > 2 && z != 1 && (z != m.week_days.length -1) ) {
-                description += ", "
-            }            
+                if(m.week_days.length > 2 && z != 1 && (z != m.week_days.length -1) ) {
+                    description += ", "
+                }            
+            });
+            
+            description += " de ";
+            description += m.start_hour + ":" + ('00' + m.start_minute ).slice(-2);
+            description += " às ";
+            description += m.end_hour + ":" +  ('00' + m.end_minute ).slice(-2);
+
+            options[options.length] = '<option value=' + m.id + '>' + description +  '</option>'
         });
-        
-        description += " de ";
-        description += m.start_hour + ":" + ('00' + m.start_minute ).slice(-2);
-        description += " às ";
-        description += m.end_hour + ":" +  ('00' + m.end_minute ).slice(-2);
 
-        options[options.length] = '<option value=' + m.id + '>' + description +  '</option>'
-    });
-
-    $.each(options, function(i, v) {
-       select.append($(v));
-    });        
+        $.each(options, function(i, v) {
+        select.append($(v));
+        }); 
+    } else {
+        select.append('<option value="-1">Em breve! Desejo ser avisado quando estiver disponível.</option>');
+    }       
 }
 
 function sendData() {            
@@ -65,7 +69,7 @@ function sendData() {
         unit: unitField.val(),
         schedule: $('#inputSchedule').val(),
         voucher_id: voucherField.val(), 
-        invite: inviteKeyField.val(),  
+        invite: inviteKeyField.length > 0 ? inviteKeyField.val() : null,  
         "g-recaptcha-response": $('#g-recaptcha-response').val() 
     };
 

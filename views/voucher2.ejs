@@ -91,9 +91,10 @@ h6 {
                         <option>Selecione o horário preferencial</option>
                     </select>
                 </div>
-            </div>                                            
+            </div>                                               
             <% if(voucher != null && voucher.additional_question != null 
-                    && voucher.additional_question.length > 0) { %>
+                    && voucher.additional_question.length > 0
+                    && invite.relationship_type != 14) { %>
 
                 <h6><%-voucher.additional_question %>  </h6>
                 <input type="hidden" id="inputQuestion" value="<%- voucher.additional_question %>" />

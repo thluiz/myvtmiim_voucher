@@ -52,13 +52,17 @@ app.get('/voucher/membros2/:invite?', function (req, res) {
     }
     var invite_id = 0;
     var voucher_id = 1;
-    var voucher = { formatted_text: "", header_text: "" };
+    var voucher = { formatted_text: "", header_text: "", anonymous_header_text: "" };
     var invite = { indicator: "", key: "", indicated: "" };
     var facebook = "";
     var email = "";
     var phone = "";
     var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros2'; });
     var invites = invite_data.filter(function (v) { return v.key === req.params.invite.toLocaleUpperCase(); });
+    if (vouchers.length > 0) {
+        voucher = vouchers[0];
+        voucher_id = vouchers[0].id;
+    }
     if (invites.length > 0) {
         invite = invites[0];
         invite_id = invites[0].id;
@@ -72,19 +76,17 @@ app.get('/voucher/membros2/:invite?', function (req, res) {
         if (invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }) != undefined) {
             phone = invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }).contact;
         }
-    }
-    if (vouchers.length > 0) {
-        voucher = vouchers[0];
-        voucher_id = vouchers[0].id;
-        voucher.formatted_text = converter.makeHtml(replaceInvites(voucher.header_text, invite));
+        voucher.formatted_text = converter.makeHtml(replaceInvites(invite.relationship_type == 14 ? voucher.anonymous_header_text : voucher.header_text, invite));
     }
     var locals = {
         captcha: recaptcha.render(),
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher: voucher, invite: invite,
+        voucher: voucher,
+        invite: invite,
         data: JSON.stringify(voucher_data),
+        data_invite: JSON.stringify(invite),
         email: email, phone: phone, facebook: facebook
     };
     res.render('voucher2', locals);
@@ -241,31 +243,22 @@ function validateVoucherRequest(recaptchaError, voucher) {
     if (voucher.name && voucher.name.length >= 5 && voucher.name.split(' ').length < 2) {
         errors[errors.length] = "Informe nome e sobrenome";
     }
-    if (voucher.email.length < 3) {
-        errors[errors.length] = "Informe o e-mail";
-    }
     if (voucher.inputQuestion
         && voucher.inputQuestion.length > 0
         && (voucher.additionalAnswer == null || voucher.additionalAnswer.length < 3)) {
         errors[errors.length] = "Responda a pergunta: '" + voucher.inputQuestion + "'";
     }
-    if (voucher.email.length > 3 && !validateEmail(voucher.email)) {
-        errors[errors.length] = "Informe um e-mail válido";
-    }
     if (voucher.cpf && voucher.cpf.length > 0 && !cpf.validate(voucher.cpf)) {
         errors[errors.length] = "Informe um CPF válido";
     }
-    if (!voucher.phone || voucher.phone.length <= 8) {
-        errors[errors.length] = "Informe seu telefone";
-    }
-    if (!voucher.socialLinks || voucher.socialLinks.length < 3) {
-        errors[errors.length] = "Informe seu facebook ou instagram";
+    if (!voucher.phone && !voucher.socialLinks && !voucher.email
+        && voucher.email.length > 3 && !validateEmail(voucher.email)
+        && voucher.phone.length <= 8
+        && voucher.socialLinks && voucher.socialLinks.length < 3) {
+        errors[errors.length] = "Informe ao menos um contato";
     }
     if (!voucher.unit || voucher.unit < 0) {
         errors[errors.length] = "Selecione sua unidade preferencial";
-    }
-    if (!voucher.schedule || voucher.schedule < 0) {
-        errors[errors.length] = "Selecione o agendamento";
     }
     return {
         success: errors.length <= 0,

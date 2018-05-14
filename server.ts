@@ -66,7 +66,7 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
 
     let invite_id = 0;
     let voucher_id = 1;
-    let voucher = { formatted_text: "", header_text: ""};
+    let voucher = { formatted_text: "", header_text: "", anonymous_header_text: ""};
     let invite: any = { indicator: "", key: "", indicated: "" };
     let facebook = "";
     let email = "";
@@ -75,6 +75,11 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
     const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros2');
     const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string).toLocaleUpperCase());
     
+    if(vouchers.length > 0) {
+        voucher = vouchers[0];                    
+        voucher_id = vouchers[0].id;
+    }
+
     if(invites.length > 0) {
         invite = invites[0];                    
         invite_id = invites[0].id;
@@ -92,24 +97,28 @@ app.get('/voucher/membros2/:invite?', function(req, res) {
         if(invite.contacts.find(ct => ct.contact_type == 2 || ct.contact_type == 3) != undefined) {
             phone = invite.contacts.find(ct => ct.contact_type == 2 || ct.contact_type == 3).contact;                        
         }
+
+        voucher.formatted_text = converter.makeHtml(
+            replaceInvites(invite.relationship_type == 14 ? voucher.anonymous_header_text : voucher.header_text, 
+                invite
+            )            
+        );
     }
 
-    if(vouchers.length > 0) {
-        voucher = vouchers[0];                    
-        voucher_id = vouchers[0].id;
-        voucher.formatted_text = converter.makeHtml(replaceInvites(voucher.header_text, invite));
-    }
+
 
     let locals = {         
         captcha: recaptcha.render(),
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher, invite,
+        voucher, 
+        invite,
         data: JSON.stringify(voucher_data),
+        data_invite: JSON.stringify(invite),
         email, phone, facebook
     };
-
+    
     res.render('voucher2', locals);
 });
 
@@ -292,10 +301,6 @@ function validateVoucherRequest(recaptchaError, voucher) {
         errors[errors.length] = "Informe nome e sobrenome";
     }
 
-    if(voucher.email.length < 3) {
-        errors[errors.length] = "Informe o e-mail";
-    }
-
     if(voucher.inputQuestion 
         && voucher.inputQuestion.length > 0
         && (voucher.additionalAnswer == null || voucher.additionalAnswer.length < 3)
@@ -303,28 +308,19 @@ function validateVoucherRequest(recaptchaError, voucher) {
         errors[errors.length] = `Responda a pergunta: '${voucher.inputQuestion}'`;
     }
 
-    if(voucher.email.length > 3 && !validateEmail(voucher.email)) {
-        errors[errors.length] = "Informe um e-mail válido";
-    }
-
     if(voucher.cpf && voucher.cpf.length > 0 && !cpf.validate(voucher.cpf)) {
         errors[errors.length] = "Informe um CPF válido";
     }
 
-    if(!voucher.phone || voucher.phone.length <= 8) {
-        errors[errors.length] = "Informe seu telefone";
-    }
-
-    if(!voucher.socialLinks || voucher.socialLinks.length < 3) {
-        errors[errors.length] = "Informe seu facebook ou instagram";
+    if(!voucher.phone && !voucher.socialLinks && !voucher.email 
+        && voucher.email.length > 3 && !validateEmail(voucher.email)
+        && voucher.phone.length <= 8
+        && voucher.socialLinks && voucher.socialLinks.length < 3) {
+        errors[errors.length] = "Informe ao menos um contato";
     }
 
     if(!voucher.unit || voucher.unit < 0) {
         errors[errors.length] = "Selecione sua unidade preferencial";
-    }
-
-    if(!voucher.schedule || voucher.schedule < 0) {
-        errors[errors.length] = "Selecione o agendamento";
     }
 
     return {
