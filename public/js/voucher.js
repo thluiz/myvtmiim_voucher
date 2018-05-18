@@ -18,8 +18,8 @@ function changeBranch(id) {
         $.each(branch.voucher_map, function(i, m) {
             var description = '';
             description += m.title ? m.title + ' - ' : '';
-                                            
-            description += formatArray($.map(m.week_days.map, (val) => val.name));
+                                       
+            description += formatArray($.map(m.week_days, (val) => val.name));
 
             description += " de ";
             description += m.start_hour + ":" + ('00' + m.start_minute ).slice(-2);
