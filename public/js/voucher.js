@@ -18,19 +18,9 @@ function changeBranch(id) {
         $.each(branch.voucher_map, function(i, m) {
             var description = '';
             description += m.title ? m.title + ' - ' : '';
-                    
-            $.each(m.week_days, function(z, w) { 
-                if(z == m.week_days.length -1 && m.week_days.length > 1) {
-                    description += " e ";
-                }
+                                            
+            description += formatArray($.map(m.week_days.map, (val) => val.name));
 
-                description += w.name;
-
-                if(m.week_days.length > 2 && z != 1 && (z != m.week_days.length -1) ) {
-                    description += ", "
-                }            
-            });
-            
             description += " de ";
             description += m.start_hour + ":" + ('00' + m.start_minute ).slice(-2);
             description += " às ";
@@ -45,6 +35,22 @@ function changeBranch(id) {
     } else {
         select.append('<option value="-1">Em breve! Desejo ser avisado quando estiver disponível.</option>');
     }       
+}
+
+function formatArray(arr){
+    var outStr = "";
+    if (arr.length === 1) {
+        outStr = arr[0];
+    } else if (arr.length === 2) {
+        //joins all with "and" but no commas
+        //example: "bob and sam"
+        outStr = arr.join(' e ');
+    } else if (arr.length > 2) {
+        //joins all with commas, but last one gets ", e" (oxford comma!)
+        //example: "bob, joe, e sam"
+        outStr = arr.slice(0, -1).join(', ') + ' e ' + arr.slice(-1);
+    }
+    return outStr;
 }
 
 function sendData() {            
