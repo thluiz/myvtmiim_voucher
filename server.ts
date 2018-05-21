@@ -334,7 +334,8 @@ function validateEmail(email) {
     return re.test(email);
 }
 
-getVoucherData();
-getInvitesData();
-
-app.listen(process.env.PORT || 27577, () => console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `))
+app.listen(process.env.PORT || 27577, 
+    () =>  { console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `);
+    getVoucherData();
+    getInvitesData();
+});
