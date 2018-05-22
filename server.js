@@ -38,58 +38,10 @@ app.get("/update_invites", function (req, res) {
     });
 });
 app.get('/voucher/membros2/:invite?', function (req, res) {
-    if (!voucher_data) {
-        getVoucherData(function () {
-            res.send("Looking for vouchers. Please try again");
-        });
-        return;
-    }
-    if (!invite_data) {
-        getInvitesData(function () {
-            res.send("Looking for invites. Please try again");
-        });
-        return;
-    }
-    var invite_id = 0;
-    var voucher_id = 1;
-    var voucher = { formatted_text: "", header_text: "", anonymous_header_text: "" };
-    var invite = { indicator: "", key: "", indicated: "" };
-    var facebook = "";
-    var email = "";
-    var phone = "";
-    var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros2'; });
-    var invites = invite_data.filter(function (v) { return v.key === req.params.invite.toLocaleUpperCase(); });
-    if (vouchers.length > 0) {
-        voucher = vouchers[0];
-        voucher_id = vouchers[0].id;
-    }
-    if (invites.length > 0) {
-        invite = invites[0];
-        invite_id = invites[0].id;
-        console.log(invite.contacts.find(function (ct) { return ct.contact_type == 1; }) != undefined);
-        if (invite.contacts.find(function (ct) { return ct.contact_type == 1; }) != undefined) {
-            email = invite.contacts.find(function (ct) { return ct.contact_type == 1; }).contact;
-        }
-        if (invite.contacts.find(function (ct) { return ct.contact_type == 4 || ct.contact_type == 5; }) != undefined) {
-            facebook = invite.contacts.find(function (ct) { return ct.contact_type == 4 || ct.contact_type == 5; }).contact;
-        }
-        if (invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }) != undefined) {
-            phone = invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }).contact;
-        }
-        voucher.formatted_text = converter.makeHtml(replaceInvites(invite.relationship_type == 14 ? voucher.anonymous_header_text : voucher.header_text, invite));
-    }
-    var locals = {
-        captcha: recaptcha.render(),
-        origin: req.params.origin,
-        voucher_data: voucher_data,
-        voucher_id: voucher_id,
-        voucher: voucher,
-        invite: invite,
-        data: JSON.stringify(voucher_data),
-        data_invite: JSON.stringify(invite),
-        email: email, phone: phone, facebook: facebook
-    };
-    res.render('voucher2', locals);
+    renderInvitePage(req, res);
+});
+app.get('/voucher/membros/:invite?', function (req, res) {
+    renderInvitePage(req, res);
 });
 app.get('/voucher/:origin?', function (req, res) {
     if (!voucher_data) {
@@ -168,6 +120,60 @@ app.post('/voucher', function (req, res) {
         });
     }
 });
+function renderInvitePage(req, res) {
+    if (!voucher_data) {
+        getVoucherData(function () {
+            res.send("Looking for vouchers. Please try again");
+        });
+        return;
+    }
+    if (!invite_data) {
+        getInvitesData(function () {
+            res.send("Looking for invites. Please try again");
+        });
+        return;
+    }
+    var invite_id = 0;
+    var voucher_id = 1;
+    var voucher = { formatted_text: "", header_text: "", anonymous_header_text: "" };
+    var invite = { indicator: "", key: "", indicated: "" };
+    var facebook = "";
+    var email = "";
+    var phone = "";
+    var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros2'; });
+    var invites = invite_data.filter(function (v) { return v.key === req.params.invite.toLocaleUpperCase(); });
+    if (vouchers.length > 0) {
+        voucher = vouchers[0];
+        voucher_id = vouchers[0].id;
+    }
+    if (invites.length > 0) {
+        invite = invites[0];
+        invite_id = invites[0].id;
+        console.log(invite.contacts.find(function (ct) { return ct.contact_type == 1; }) != undefined);
+        if (invite.contacts.find(function (ct) { return ct.contact_type == 1; }) != undefined) {
+            email = invite.contacts.find(function (ct) { return ct.contact_type == 1; }).contact;
+        }
+        if (invite.contacts.find(function (ct) { return ct.contact_type == 4 || ct.contact_type == 5; }) != undefined) {
+            facebook = invite.contacts.find(function (ct) { return ct.contact_type == 4 || ct.contact_type == 5; }).contact;
+        }
+        if (invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }) != undefined) {
+            phone = invite.contacts.find(function (ct) { return ct.contact_type == 2 || ct.contact_type == 3; }).contact;
+        }
+        voucher.formatted_text = converter.makeHtml(replaceInvites(invite.relationship_type == 14 ? voucher.anonymous_header_text : voucher.header_text, invite));
+    }
+    var locals = {
+        captcha: recaptcha.render(),
+        origin: req.params.origin,
+        voucher_data: voucher_data,
+        voucher_id: voucher_id,
+        voucher: voucher,
+        invite: invite,
+        data: JSON.stringify(voucher_data),
+        data_invite: JSON.stringify(invite),
+        email: email, phone: phone, facebook: facebook
+    };
+    res.render('voucher2', locals);
+}
 function replaceInvites(text, invite_data) {
     var str = text;
     var replaces = [];
