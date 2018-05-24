@@ -11,7 +11,12 @@
                 "node_modules/*",
                 "src/types/*"
             ]
-        }
+        },
+        "lib": [
+            "es5",
+            "es2015",
+            "dom",
+            "scripthost"]
     },
     "exclude": [
         "node_modules"

@@ -37,24 +37,30 @@ app.get("/sat", (req, res) => {
     res.redirect("https://spark.adobe.com/page/eWYNBHKtzojOs/")
 });
 
-app.get("/update_voucher", (req, res) => {
-    getVoucherData(() => {
+app.get("/update_voucher", async (req, res) => {
+    try {
+        voucher_data = await getVoucherData();
         res.send({ 'success': true });
-    });
+    } catch (error) {
+        res.send({ 'success': false, 'error': error });
+    }
 });
 
-app.get("/update_invites", (req, res) => {
-    getInvitesData(() => {
+app.get("/update_invites", async (req, res) => {    
+    try {
+        invite_data = await getInvitesData();
         res.send({ 'success': true });
-    });
+    } catch (error) {
+        res.send({ 'success': false, 'error': error });
+    }
 });
 
-app.get('/voucher/membros2/:invite?', function(req, res) {
-    renderInvitePage(req, res)
+app.get('/voucher/membros2/:invite?', async (req, res) => {
+    await renderInvitePage(req, res)
 });
 
-app.get('/voucher/membros/:invite?', function(req, res) {
-    renderInvitePage(req, res)
+app.get('/voucher/membros/:invite?', async (req, res) => {
+    await renderInvitePage(req, res)
 });
 
 app.get('/voucher/:origin?', function(req, res) {    
@@ -88,11 +94,9 @@ app.get('/voucher/:origin?', function(req, res) {
     res.render('voucher', locals);
 });
 
-app.get('/voucher_final/:id?', function(req, res) {    
-    if(!voucher_data) {
-        res.send("awaiting for voucher");
-        setTimeout(getVoucherData, 30000);
-        return;
+app.get('/voucher_final/:id?', async (req, res) => {    
+    if(!voucher_data) {        
+        voucher_data = await getVoucherData();
     }
 
     let voucher_id = 1;
@@ -150,19 +154,23 @@ app.post('/voucher', function(req, res) {
     }    
 });
 
-function renderInvitePage(req, res) {
-    if(!voucher_data) {                
-        getVoucherData(() => {
-            res.send("Looking for vouchers. Please try again");
-        });
-        return;
+async function renderInvitePage(req, res) {
+    if(!voucher_data) {                        
+        try {
+            voucher_data = await getVoucherData();        
+        } catch(error) {
+            res.send("Error loading vouchers data, please try again or contact the support");
+            return;
+        }        
     }
 
     if(!invite_data) {        
-        getInvitesData(() => {
-            res.send("Looking for invites. Please try again");
-        });
-        return;
+        try {
+            invite_data = await getInvitesData();        
+        } catch(error) {
+            res.send("Error loading invites data, please try again or contact the support");
+            return;
+        }        
     }
 
     let invite_id = 0;
@@ -174,8 +182,14 @@ function renderInvitePage(req, res) {
     let phone = "";
     
     const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros2');
-    const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string).toLocaleUpperCase());
+    const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string || "").toLocaleUpperCase());
     
+    //console.log(voucher_data.vouchers);
+    //console.log(vouchers);
+    console.log('a');
+    console.log(invite_data);
+    console.log(invites);
+
     if(vouchers.length > 0) {
         voucher = vouchers[0];                    
         voucher_id = vouchers[0].id;
@@ -205,8 +219,6 @@ function renderInvitePage(req, res) {
             )            
         );
     }
-
-
 
     let locals = {         
         captcha: recaptcha.render(),
@@ -238,38 +250,34 @@ function replaceInvites(text, invite_data) {
     return str;
 }
 
-function getInvitesData(callback?) {    
-    try {
-        axios.get(process.env.GET_DATA_INVITES_API)
-        .then(function (response) {
-            let data = response.data;            
-            invite_data = data;
-
-            if(callback) {
-                callback();
-            }
-        });
-    } catch (error) {
-        console.log(error);
-        return;
-    }    
+async function getInvitesData() : Promise<any> {        
+    return new Promise((resolve, reject) => {
+        try {
+            axios.get(process.env.GET_DATA_INVITES_API)
+            .then(function (response) {
+                let data = response.data;                            
+                resolve(data);
+            });
+        } catch (error) {                   
+            reject(error);            
+        }    
+    });
 }
 
-function getVoucherData(callback?) {    
-    try {
-        axios.get(process.env.GET_DATA_VOUCHER_API)
-        .then(function (response) {
-            let data = response.data[0];            
-            voucher_data = data;
-
-            if(callback) {
-                callback();
-            }
-        });
-    } catch (error) {
-        console.log(error);
-        return;
-    }    
+async function getVoucherData() : Promise<any> {    
+    return new Promise((resolve, reject) => {    
+        try {
+            axios.get(process.env.GET_DATA_VOUCHER_API)
+            .then(function (response) {
+                let data = response.data[0];                            
+                resolve(data);
+            });
+        } catch (error) {
+            console.log(error);
+            reject(error);
+            return;
+        }    
+    });
 }
 
 function postVoucher(voucher, onSuccess, onError) {
@@ -343,7 +351,13 @@ function validateEmail(email) {
 }
 
 app.listen(process.env.PORT || 27577, 
-    () =>  { console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `);
-    getVoucherData();
-    getInvitesData();
-});
+    async () =>  {         
+        console.log(`loading vouchers data`);
+        voucher_data = await getVoucherData();
+
+        console.log(`loading invites data`);
+        invite_data = await getInvitesData();
+
+        console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `);
+    }
+);
