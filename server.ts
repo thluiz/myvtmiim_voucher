@@ -11,7 +11,7 @@ var showdown  = require('showdown');
 var converter = new showdown.Converter();
 
 let update_timer = null;
-let voucher_data = null;
+let voucher_data = null; 
 let invite_data = null;
 
 app.use(express.static('public'));
@@ -63,11 +63,9 @@ app.get('/voucher/membros/:invite?', async (req, res) => {
     await renderInvitePage(req, res)
 });
 
-app.get('/voucher/:origin?', function(req, res) {    
+app.get('/voucher/:origin?', async (req, res) => {    
     if(!voucher_data) {
-        res.send("awaiting for voucher");
-        setTimeout(getVoucherData, 30000);
-        return;
+        voucher_data = await getVoucherData();            
     }
 
     let voucher_id = 1;
@@ -350,6 +348,11 @@ function validateEmail(email) {
     return re.test(email);
 }
 
+(async () => {
+    voucher_data = await getVoucherData();
+    invite_data = await getInvitesData();
+})();
+
 app.listen(process.env.PORT || 27577, 
     async () =>  {         
         console.log(`loading vouchers data`);
@@ -361,3 +364,6 @@ app.listen(process.env.PORT || 27577,
         console.log(`Voucher app listening on port ${process.env.PORT || 27577}! `);
     }
 );
+
+
+

@@ -121,31 +121,39 @@ app.get('/voucher/membros/:invite?', function (req, res) { return __awaiter(_thi
         }
     });
 }); });
-app.get('/voucher/:origin?', function (req, res) {
-    if (!voucher_data) {
-        res.send("awaiting for voucher");
-        setTimeout(getVoucherData, 30000);
-        return;
-    }
-    var voucher_id = 1;
-    var voucher = { formatted_text: "", header_text: "" };
-    var invite = { indicator: "", key: "", indicated: "" };
-    var vouchers = voucher_data.vouchers.filter(function (v) { return v.url === req.params.origin; });
-    if (vouchers.length > 0) {
-        voucher = vouchers[0];
-        voucher_id = vouchers[0].id;
-        voucher.formatted_text = converter.makeHtml(voucher.header_text);
-    }
-    var locals = {
-        captcha: recaptcha.render(),
-        origin: req.params.origin,
-        voucher_data: voucher_data,
-        voucher_id: voucher_id,
-        voucher: voucher, invite: invite,
-        data: JSON.stringify(voucher_data)
-    };
-    res.render('voucher', locals);
-});
+app.get('/voucher/:origin?', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var voucher_id, voucher, invite, vouchers, locals;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                if (!!voucher_data) return [3 /*break*/, 2];
+                return [4 /*yield*/, getVoucherData()];
+            case 1:
+                voucher_data = _a.sent();
+                _a.label = 2;
+            case 2:
+                voucher_id = 1;
+                voucher = { formatted_text: "", header_text: "" };
+                invite = { indicator: "", key: "", indicated: "" };
+                vouchers = voucher_data.vouchers.filter(function (v) { return v.url === req.params.origin; });
+                if (vouchers.length > 0) {
+                    voucher = vouchers[0];
+                    voucher_id = vouchers[0].id;
+                    voucher.formatted_text = converter.makeHtml(voucher.header_text);
+                }
+                locals = {
+                    captcha: recaptcha.render(),
+                    origin: req.params.origin,
+                    voucher_data: voucher_data,
+                    voucher_id: voucher_id,
+                    voucher: voucher, invite: invite,
+                    data: JSON.stringify(voucher_data)
+                };
+                res.render('voucher', locals);
+                return [2 /*return*/];
+        }
+    });
+}); });
 app.get('/voucher_final/:id?', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     var voucher_id, voucher, vouchers, locals;
     return __generator(this, function (_a) {
@@ -395,6 +403,19 @@ function validateEmail(email) {
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
 }
+(function () { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, getVoucherData()];
+            case 1:
+                voucher_data = _a.sent();
+                return [4 /*yield*/, getInvitesData()];
+            case 2:
+                invite_data = _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); })();
 app.listen(process.env.PORT || 27577, function () { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
