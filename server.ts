@@ -69,7 +69,7 @@ app.get('/voucher/:origin?', async (req, res) => {
     }
 
     let voucher_id = 1;
-    let voucher = { formatted_text: "", header_text: ""};
+    let voucher = { formatted_text: "", header_text: "", youtube_url: ""};
     let invite: any = { indicator: "", key: "", indicated: "" };
     
     const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === req.params.origin);
@@ -80,16 +80,28 @@ app.get('/voucher/:origin?', async (req, res) => {
         voucher.formatted_text = converter.makeHtml(voucher.header_text);
     }
 
+    let email = null;
+    let phone = null;
+    let facebook = null;
+    let youtube_url = null;
+
+    if(voucher.youtube_url && voucher.youtube_url.length > 0) {
+        youtube_url = voucher.youtube_url
+                        .replace("https://www.youtube.com/watch?v=", "")
+                        .replace("&feature=youtu.be", "");
+    }
+
     let locals = {         
         captcha: recaptcha.render(),
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher, invite,
+        voucher, invite, email, 
+        phone, facebook, youtube_url,
         data: JSON.stringify(voucher_data)        
     };
 
-    res.render('voucher', locals);
+    res.render('voucher2', locals);
 });
 
 app.get('/voucher_final/:id?', async (req, res) => {    
@@ -107,13 +119,14 @@ app.get('/voucher_final/:id?', async (req, res) => {
         voucher_id = vouchers[0].id;
         voucher.formatted_final_text = converter.makeHtml(voucher.final_text);
     }
+    let email = "";
 
     let locals = {         
         captcha: recaptcha.render(),
         origin: req.params.origin,
         voucher_data: voucher_data,
         voucher_id: voucher_id,
-        voucher,
+        voucher, email,
         data: JSON.stringify(voucher_data)
     };
 
@@ -173,21 +186,15 @@ async function renderInvitePage(req, res) {
 
     let invite_id = 0;
     let voucher_id = 1;
-    let voucher = { formatted_text: "", header_text: "", anonymous_header_text: ""};
+    let voucher = { formatted_text: "", header_text: "", anonymous_header_text: "", youtube_url: ""};
     let invite: any = { indicator: "", key: "", indicated: "" };
     let facebook = "";
     let email = "";
     let phone = "";
     
-    const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros2');
+    const vouchers = (voucher_data.vouchers as any[]).filter(v => v.url === 'membros' || v.url === 'membros2');
     const invites = (invite_data as any[]).filter(v => v.key === (req.params.invite as string || "").toLocaleUpperCase());
     
-    //console.log(voucher_data.vouchers);
-    //console.log(vouchers);
-    console.log('a');
-    console.log(invite_data);
-    console.log(invites);
-
     if(vouchers.length > 0) {
         voucher = vouchers[0];                    
         voucher_id = vouchers[0].id;
@@ -218,6 +225,14 @@ async function renderInvitePage(req, res) {
         );
     }
 
+    let youtube_url = null;
+
+    if(voucher.youtube_url && voucher.youtube_url.length > 0) {
+        youtube_url = voucher.youtube_url
+                        .replace("https://www.youtube.com/watch?v=", "")
+                        .replace("&feature=youtu.be", "");
+    }
+
     let locals = {         
         captcha: recaptcha.render(),
         origin: req.params.origin,
@@ -227,7 +242,7 @@ async function renderInvitePage(req, res) {
         invite,
         data: JSON.stringify(voucher_data),
         data_invite: JSON.stringify(invite),
-        email, phone, facebook
+        email, phone, facebook, youtube_url
     };
     
     res.render('voucher2', locals);

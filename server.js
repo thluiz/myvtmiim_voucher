@@ -122,7 +122,7 @@ app.get('/voucher/membros/:invite?', function (req, res) { return __awaiter(_thi
     });
 }); });
 app.get('/voucher/:origin?', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var voucher_id, voucher, invite, vouchers, locals;
+    var voucher_id, voucher, invite, vouchers, email, phone, facebook, youtube_url, locals;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -133,7 +133,7 @@ app.get('/voucher/:origin?', function (req, res) { return __awaiter(_this, void 
                 _a.label = 2;
             case 2:
                 voucher_id = 1;
-                voucher = { formatted_text: "", header_text: "" };
+                voucher = { formatted_text: "", header_text: "", youtube_url: "" };
                 invite = { indicator: "", key: "", indicated: "" };
                 vouchers = voucher_data.vouchers.filter(function (v) { return v.url === req.params.origin; });
                 if (vouchers.length > 0) {
@@ -141,21 +141,31 @@ app.get('/voucher/:origin?', function (req, res) { return __awaiter(_this, void 
                     voucher_id = vouchers[0].id;
                     voucher.formatted_text = converter.makeHtml(voucher.header_text);
                 }
+                email = null;
+                phone = null;
+                facebook = null;
+                youtube_url = null;
+                if (voucher.youtube_url && voucher.youtube_url.length > 0) {
+                    youtube_url = voucher.youtube_url
+                        .replace("https://www.youtube.com/watch?v=", "")
+                        .replace("&feature=youtu.be", "");
+                }
                 locals = {
                     captcha: recaptcha.render(),
                     origin: req.params.origin,
                     voucher_data: voucher_data,
                     voucher_id: voucher_id,
-                    voucher: voucher, invite: invite,
+                    voucher: voucher, invite: invite, email: email,
+                    phone: phone, facebook: facebook, youtube_url: youtube_url,
                     data: JSON.stringify(voucher_data)
                 };
-                res.render('voucher', locals);
+                res.render('voucher2', locals);
                 return [2 /*return*/];
         }
     });
 }); });
 app.get('/voucher_final/:id?', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    var voucher_id, voucher, vouchers, locals;
+    var voucher_id, voucher, vouchers, email, locals;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -173,12 +183,13 @@ app.get('/voucher_final/:id?', function (req, res) { return __awaiter(_this, voi
                     voucher_id = vouchers[0].id;
                     voucher.formatted_final_text = converter.makeHtml(voucher.final_text);
                 }
+                email = "";
                 locals = {
                     captcha: recaptcha.render(),
                     origin: req.params.origin,
                     voucher_data: voucher_data,
                     voucher_id: voucher_id,
-                    voucher: voucher,
+                    voucher: voucher, email: email,
                     data: JSON.stringify(voucher_data)
                 };
                 res.render('voucher_final', locals);
@@ -216,7 +227,7 @@ app.post('/voucher', function (req, res) {
 });
 function renderInvitePage(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var error_3, error_4, invite_id, voucher_id, voucher, invite, facebook, email, phone, vouchers, invites, locals;
+        var error_3, error_4, invite_id, voucher_id, voucher, invite, facebook, email, phone, vouchers, invites, youtube_url, locals;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -248,18 +259,13 @@ function renderInvitePage(req, res) {
                 case 8:
                     invite_id = 0;
                     voucher_id = 1;
-                    voucher = { formatted_text: "", header_text: "", anonymous_header_text: "" };
+                    voucher = { formatted_text: "", header_text: "", anonymous_header_text: "", youtube_url: "" };
                     invite = { indicator: "", key: "", indicated: "" };
                     facebook = "";
                     email = "";
                     phone = "";
-                    vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros2'; });
+                    vouchers = voucher_data.vouchers.filter(function (v) { return v.url === 'membros' || v.url === 'membros2'; });
                     invites = invite_data.filter(function (v) { return v.key === (req.params.invite || "").toLocaleUpperCase(); });
-                    //console.log(voucher_data.vouchers);
-                    //console.log(vouchers);
-                    console.log('a');
-                    console.log(invite_data);
-                    console.log(invites);
                     if (vouchers.length > 0) {
                         voucher = vouchers[0];
                         voucher_id = vouchers[0].id;
@@ -279,6 +285,12 @@ function renderInvitePage(req, res) {
                         }
                         voucher.formatted_text = converter.makeHtml(replaceInvites(invite.relationship_type == 14 ? voucher.anonymous_header_text : voucher.header_text, invite));
                     }
+                    youtube_url = null;
+                    if (voucher.youtube_url && voucher.youtube_url.length > 0) {
+                        youtube_url = voucher.youtube_url
+                            .replace("https://www.youtube.com/watch?v=", "")
+                            .replace("&feature=youtu.be", "");
+                    }
                     locals = {
                         captcha: recaptcha.render(),
                         origin: req.params.origin,
@@ -288,7 +300,7 @@ function renderInvitePage(req, res) {
                         invite: invite,
                         data: JSON.stringify(voucher_data),
                         data_invite: JSON.stringify(invite),
-                        email: email, phone: phone, facebook: facebook
+                        email: email, phone: phone, facebook: facebook, youtube_url: youtube_url
                     };
                     res.render('voucher2', locals);
                     return [2 /*return*/];

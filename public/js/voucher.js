@@ -143,5 +143,41 @@ $(function() {
     if($('#inputUnit').val() > 0) {
         changeBranch($('#inputUnit').val());
     }
+
+
+
+    // Find all YouTube videos
+    var $allVideos = $("iframe"),
+    
+        // The element that is fluid width
+        $fluidEl = $("body");
+    
+    console.log($allVideos);
+
+    // Figure out and save aspect ratio for each video
+    $allVideos.each(function() {    
+      $(this).data('aspectRatio', 315 / 560)
+    });
+    
+    // When the window is resized
+    $(window).resize(function() {    
+    
+      // Resize all videos according to their own aspect ratio
+      $allVideos.each(function() {
+        var $el = $(this);
+
+        var newWidth = $($el.parent()).width();
+        console.log(newWidth);
+        
+        $el
+          .width(newWidth)
+          .height(newWidth * $el.data('aspectRatio'));
+    
+      });
+    
+    // Kick off one resize to fix all videos on page load
+    }).resize();
+
 });
+
 
