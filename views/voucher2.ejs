@@ -135,7 +135,7 @@ h6 {
                         <option> Selecione a unidade preferencial</option>
                         <% voucher_data.branches
                             .filter((b) => {
-                                return voucher_data.branch_vouchers.find(bv => bv.branch_id == b.id) != null;
+                                return voucher_data.branch_vouchers.find(bv => bv.voucher_id == voucher_id && bv.branch_id == b.id) != null;
                             })
                             .forEach(function(branch) { %>                                
                             <% if(branch.id == invite.branch_id) { %>
