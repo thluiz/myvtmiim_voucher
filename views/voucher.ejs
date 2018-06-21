@@ -73,10 +73,13 @@ h6 {
                     </select>
                 </div>
                 <div class="col-12 text-left" id="schedule">
-                    <label for="inputUnit">Horário</label>
+                    <label for="inputSchedule">Horário</label>
                     <select style="width:100%" class="form-control" id="inputSchedule" required>
                         <option>Selecione o horário preferencial</option>
                     </select>
+                </div>
+                <div class="col-12 text-center p-3" id="lblExternal">                    
+                    Por favor, entre em contato com <%-branch.contact_phone %> ou <%-branch.contact_email %>
                 </div>
             </div>                                            
             <% if(voucher != null && voucher.additional_question != null 

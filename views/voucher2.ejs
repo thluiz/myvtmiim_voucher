@@ -133,7 +133,11 @@ h6 {
                         style="width:100%" 
                         class="form-control" id="inputUnit" required>
                         <option> Selecione a unidade preferencial</option>
-                        <% voucher_data.branches.forEach(function(branch) { %>                                
+                        <% voucher_data.branches
+                            .filter((b) => {
+                                return voucher_data.branch_vouchers.find(bv => bv.branch_id == b.id) != null;
+                            })
+                            .forEach(function(branch) { %>                                
                             <% if(branch.id == invite.branch_id) { %>
                                 <option value="<%= branch.id %>" selected><%= branch.name %></option>
                             <% } else { %>
@@ -147,6 +151,9 @@ h6 {
                     <select style="width:100%" class="form-control" id="inputSchedule" required>
                         <option>Selecione o horário preferencial</option>
                     </select>
+                </div>
+                <div class="col-12 text-center p-3" id="lblExternal">                                        
+
                 </div>
             </div>                                               
             <% if(voucher != null && voucher.additional_question != null 
@@ -225,11 +232,14 @@ h6 {
             {{:message}}
         </div>
     </script>
+    <script id="externalBranchMessageTemplate" type="text/x-jsrender">
+        Por favor, entre em contato com {{:contact_phone}} ou {{:contact_email}}        
+    </script>
 
 </form>
 
 <%- contentFor('footer') %>
-<script src="/js/voucher.js?v=1"></script>
+<script src="/js/voucher.js?v=4"></script>
 
 <script>
     loadViewData(<%-data %>); 
