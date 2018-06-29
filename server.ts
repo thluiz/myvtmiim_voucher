@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => { 
-    res.redirect('http://myvt.org');
+    res.redirect('http://myvtmi.im/voucher/aulagratis');
 });
   
 app.get("/sistema", (req, res) => {

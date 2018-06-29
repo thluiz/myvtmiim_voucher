@@ -55,7 +55,7 @@ var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPT
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.get("/", function (req, res) {
-    res.redirect('http://myvt.org');
+    res.redirect('http://myvtmi.im/voucher/aulagratis');
 });
 app.get("/sistema", function (req, res) {
     res.redirect("https://myvtmiim.azurewebsites.net");
