@@ -3,52 +3,44 @@ MYVTMI.IM - Vouchers
 
 <%- contentFor('header') %>
 <script src='https://www.google.com/recaptcha/api.js'></script>
-<style>
-.g-recaptcha {
-    display: inline-block;
-}
-input {
-    margin-bottom: 6px;
-    margin-top: 6px;
-}
-.custom-control-label {
-    margin-left:5px;
-}
-label {
-    font-weight: bold;
-    margin:0;
-    padding:0;
-    font-size: 12px;
-}
-h6 {
-    margin-top:1em;
-    margin-bottom:0;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="/styles/vouchers.css">
 
 
 <%- contentFor('body') %>
 <form class="form-signin">
     <div class="row">
-        <div class="col-12 offset-md-3 col-md-6 text-center">   
-            <div style="text-align:left">                                             
-                <% if(voucher != null && voucher.final_text != null 
-                        && voucher.formatted_final_text != null 
+        <div class="col-12 offset-md-3 col-md-6 text-center">
+            <div style="text-align:left">
+                <% if(voucher != null && voucher.final_text != null
+                        && voucher.formatted_final_text != null
                         && voucher.formatted_final_text.length > 0) { %>
 
                     <%-voucher.formatted_final_text %>
 
-                <% } else { %>                               
+                <% } else { %>
                     <p style="font-weight:bold">Obrigado!</p>
 
-                    Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.            
+                    Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.
                 <% } %>
             </div>
-        </div>        
+        </div>
     </div>
 </form>
 
+<%- contentFor('branches_footer_list') %>
+<ul>
+    <% voucher_data.branches
+    .filter((b) => {
+        return voucher_data.branch_vouchers.find(bv => bv.voucher_id == voucher_id && bv.branch_id == b.id) != null;
+    })
+    .forEach(function(branch) { %>
+        <li style="width: <%= Math.floor(100/voucher_data.branches.length) %>%">
+            <b><%= ( branch.abrev || "").replace("Núcleo ", "") %></b>
+        </li>
+    <% }); %>
+</ul>
+
 <%- contentFor('footer') %>
 <script>
-    
+
 </script>

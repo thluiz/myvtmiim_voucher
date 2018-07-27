@@ -36,6 +36,7 @@ function changeBranch(id) {
         $.each(options, function(i, v) {
             select.append($(v));
         });
+
         lblExternal.hide();
         scheduleDiv.show();
     } else {
@@ -197,5 +198,3 @@ $(function() {
     }).resize();
 
 });
-
-

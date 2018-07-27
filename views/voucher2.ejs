@@ -3,42 +3,7 @@ MYVTMI.IM - Vouchers
 
 <%- contentFor('header') %>
 <script src='https://www.google.com/recaptcha/api.js'></script>
-<style>
-.g-recaptcha {
-    display: inline-block;
-}
-input {
-    margin-bottom: 6px;
-    margin-top: 6px;
-}
-.custom-control-label {
-    margin-left:5px;
-}
-label {
-    font-weight: bold;
-    margin:0;
-    padding:0;
-    font-size: 12px;
-}
-h6 {
-    margin-top:1em;
-    margin-bottom:0;
-}
-
-.videoWrapper {
-	position: relative;
-	padding-bottom: 56.25%; /* 16:9 */
-	padding-top: 25px;
-	height: 0;
-}
-.videoWrapper iframe {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-}
-</style>
+<link rel="stylesheet" type="text/css" href="/styles/vouchers.css">
 
 
 <%- contentFor('body') %>
@@ -55,41 +20,41 @@ h6 {
         </div>
     </div>
     <div class="row">
-        <% if(voucher != null 
-            || voucher.header_text == null 
-            || voucher.formatted_text == null 
+        <% if(voucher != null
+            || voucher.header_text == null
+            || voucher.formatted_text == null
             || voucher.formatted_text.length <= 0
-            || voucher.youtube_url == null 
+            || voucher.youtube_url == null
             || voucher.youtube_url.length <= 0) { %>
-            <div class="col-12 offset-md-3 col-md-6 text-center">                                                    
-                <% if(voucher != null && voucher.header_text != null 
-                        && voucher.formatted_text != null 
+            <div class="col-12 offset-md-3 col-md-6 text-center">
+                <% if(voucher != null && voucher.header_text != null
+                        && voucher.formatted_text != null
                         && voucher.formatted_text.length > 0
-                        && (voucher.youtube_url == null 
+                        && (voucher.youtube_url == null
                             || voucher.youtube_url.length == 0)) { %>
 
                     <div style="text-align:left"><%-voucher.formatted_text %></div>
 
                 <% }; %>
 
-                <% if(voucher != null && voucher.header_text == null 
-                        && voucher.formatted_text == null                         
-                        && voucher.youtube_url != null 
+                <% if(voucher != null && voucher.header_text == null
+                        && voucher.formatted_text == null
+                        && voucher.youtube_url != null
                         && voucher.youtube_url.length > 0) { %>
-                    
+
                     <iframe width="100%" src="https://www.youtube.com/embed/Lu1RwRuU4Ng?rel=0&amp;controls=1&amp;showinfo=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
                 <% }; %>
-                            
+
             </div>
         <% }; %>
 
-        <% if(voucher != null && voucher.header_text != null 
-        && voucher.formatted_text != null 
+        <% if(voucher != null && voucher.header_text != null
+        && voucher.formatted_text != null
         && voucher.formatted_text.length > 0
-        && voucher.youtube_url != null 
+        && voucher.youtube_url != null
         && voucher.youtube_url.length > 0) { %>
-                
+
             <div class="col-12 text-center">
                 <div class="row">
                     <div class="col-12 col-lg-8 text-right">
@@ -98,29 +63,29 @@ h6 {
                     <div class="col-12 col-lg-4">
                         <div style="text-align:left"><%-voucher.formatted_text %></div>
                     </div>
-                </div>                
+                </div>
             </div>
         <% }; %>
 
         <div class="col-12 offset-md-3 col-md-6 text-center">
             <label for="inputEmail" class="sr-only">Nome Completo</label>
-            <input type="text" id="inputName" class="form-control" 
+            <input type="text" id="inputName" class="form-control"
                 value="<%- invite.indicated %>"
-                placeholder="Nome Completo" required 
-                autofocus maxlength="200" />            
+                placeholder="Nome Completo" required
+                autofocus maxlength="200" />
             <div class="row">
-                <div class="col-6">                    
-                    <input type="email" id="inputEmail" class="form-control" 
+                <div class="col-6">
+                    <input type="email" id="inputEmail" class="form-control"
                     value="<%- email %>"
                     placeholder="E-mail" required maxlength="100"/>
                 </div>
                 <div class="col-6">
-                    <input type="phone" id="inputPhone" class="form-control" 
+                    <input type="phone" id="inputPhone" class="form-control"
                     value="<%- phone %>"
                     placeholder="Telefone" required />
                 </div>
             </div>
-            <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram" 
+            <input type="text" id="inputSocialLinks" class="form-control" placeholder="Facebook/Instagram"
             value="<%- facebook %>"
             required maxlength="100" />
 
@@ -128,22 +93,22 @@ h6 {
             <div class="row">
                 <div class="col-12 text-left">
                     <label for="inputUnit">Núcleo</label>
-                    <select 
+                    <select
                         onchange="changeBranch(this.value)"
-                        style="width:100%" 
+                        style="width:100%"
                         class="form-control" id="inputUnit" required>
                         <option> Selecione a unidade preferencial</option>
                         <% voucher_data.branches
                             .filter((b) => {
                                 return voucher_data.branch_vouchers.find(bv => bv.voucher_id == voucher_id && bv.branch_id == b.id) != null;
                             })
-                            .forEach(function(branch) { %>                                
+                            .forEach(function(branch) { %>
                             <% if(branch.id == invite.branch_id) { %>
                                 <option value="<%= branch.id %>" selected><%= branch.name %></option>
                             <% } else { %>
                                 <option value="<%= branch.id %>"><%= branch.name %></option>
-                            <% }; %>                                                            
-                        <% }); %>                        
+                            <% }; %>
+                        <% }); %>
                     </select>
                 </div>
                 <div class="col-12 text-left" id="schedule">
@@ -152,11 +117,11 @@ h6 {
                         <option>Selecione o horário preferencial</option>
                     </select>
                 </div>
-                <div class="col-12 text-center p-3" id="lblExternal">                                        
+                <div class="col-12 text-center p-3" id="lblExternal">
 
                 </div>
-            </div>                                               
-            <% if(voucher != null && voucher.additional_question != null 
+            </div>
+            <% if(voucher != null && voucher.additional_question != null
                     && voucher.additional_question.length > 0
                     && invite.relationship_type != 14) { %>
 
@@ -164,20 +129,20 @@ h6 {
                 <input type="hidden" id="inputQuestion" value="<%- voucher.additional_question %>" />
                 <div class="row">
                     <div class="col-12 text-left">
-                        <input type="text" id="inputAdditionalAnswer" 
+                        <input type="text" id="inputAdditionalAnswer"
                         class="form-control" placeholder="" required maxlength="400"
                         value="<%-invite.indicator %>" />
                     </div>
                 </div>
             <% }; %>
-        </div>        
+        </div>
     </div>
     <div class="row">
         <div class="col-12 offset-md-3 col-md-6 text-center"  style="margin-top:20px;">
-            <%-captcha %>            
+            <%-captcha %>
         </div>
     </div>
-    <div id="ErrorContainer" style="margin-top:20px;display:none">        
+    <div id="ErrorContainer" style="margin-top:20px;display:none">
         <div class="alert alert-danger alert-dismissible">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             {{:message}}
@@ -185,7 +150,7 @@ h6 {
     </div>
     <div class="row">
         <div class="offset-md-3 col-6 text-center d-none d-md-block " style="margin-top:20px;margin-bottom:20px">
-            <button class="btn btn-lg btn-primary btn-block"                 
+            <button class="btn btn-lg btn-primary btn-block"
                 id="submitField" type="button">
                 <% if(voucher != null && voucher.confirm_button_text != null && voucher.confirm_button_text.length > 0) { %>
                     <%= voucher.confirm_button_text %>
@@ -194,16 +159,16 @@ h6 {
                 <% }; %>
             </button>
 
-            <button class="btn btn-lg btn-info btn-block" 
+            <button class="btn btn-lg btn-info btn-block"
                 id="sendingButton" type="button" disabled style="display:none"
             >
             <i class="fas fa-spinner fa-spin fa-lg"></i> Enviando...
-            </button>  
+            </button>
         </div>
         <div class="col-12 text-center d-block d-md-none " style="margin-top:20px;margin-bottom:20px">
             <button class="btn btn-lg btn-primary btn-block"
                 id="submitFieldMobile" type="button">
-                
+
                 <% if(voucher != null && voucher.confirm_button_text != null && voucher.confirm_button_text.length > 0) { %>
                     <%= voucher.confirm_button_text %>
                 <% } else { %>
@@ -211,18 +176,18 @@ h6 {
                 <% }; %>
             </button>
 
-            <button class="btn btn-lg btn-info btn-block" 
+            <button class="btn btn-lg btn-info btn-block"
                 id="sendingButtonMobile" type="button" disabled style="display:none"
             >
             <i class="fas fa-spinner fa-spin fa-lg"></i> Enviando...
-            </button>                             
+            </button>
         </div>
     </div>
     <div class="alert alert-success alert-dismissible" id="successMessage" style="display:none">
         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
         Obrigado! Em breve entraremos em contato para confirmar seu agendamento e iniciar sua semana de aulas.
     </div>
-    
+
     <input type="hidden" id="inputVoucher" value="<%- voucher_id %>" />
     <input type="hidden" id="inputInviteKey" value="<%- invite.identifier %>" />
 
@@ -233,14 +198,27 @@ h6 {
         </div>
     </script>
     <script id="externalBranchMessageTemplate" type="text/x-jsrender">
-        Por favor, entre em contato com {{:contact_phone}} ou {{:contact_email}}        
+        Por favor, entre em contato com {{:contact_phone}} ou {{:contact_email}}
     </script>
 
 </form>
+
+<%- contentFor('branches_footer_list') %>
+<ul>
+    <% voucher_data.branches
+    .filter((b) => {
+        return voucher_data.branch_vouchers.find(bv => bv.voucher_id == voucher_id && bv.branch_id == b.id) != null;
+    })
+    .forEach(function(branch) { %>
+        <li style="width: <%= Math.floor(100/voucher_data.branches.length) %>%">
+            <b><%= ( branch.abrev || "").replace("Núcleo ", "") %></b>
+        </li>
+    <% }); %>
+</ul>
 
 <%- contentFor('footer') %>
 <script src="/js/voucher.js?v=4"></script>
 
 <script>
-    loadViewData(<%-data %>); 
+    loadViewData(<%-data %>);
 </script>

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>    
+  <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">    
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-116834835-1"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -14,10 +14,10 @@
         gtag('config', 'UA-116834835-1');
     </script>
 
-    <!-- FontAwesome -->    
+    <!-- FontAwesome -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
 
-    <!-- Bootstrap -->    
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
 
     <title><%-title%></title>
@@ -27,21 +27,21 @@
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->    
+    <![endif]-->
 
     <%-header%>
   </head>
   <body style="color:#666">
         <div class="container text-center">
             <div class="py-5 text-center">
-                <img class="d-block mx-auto mb-4" src="/img/logo.png" alt="" style="width:300px;">                
+                <img class="d-block mx-auto mb-4" src="/img/logo.png" alt="" style="width:300px;">
                 <p class="lead">
-                    
+
                 </p>
             </div>
 
             <%-body%>
-                        
+
             <footer class="my-5 text-muted text-center text-small">
                 <div class="row">
                     <div class="col-12 text-center">
@@ -51,20 +51,12 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-4 text-center">
-                        <strong>Barra</strong>, Península/ O2 
-                    </div>
-                    <div class="col-4 text-center">
-                        <strong>Ipanema</strong>, Vitrine de Ipanema 
-                    </div>
-                    <div class="col-4 text-center">
-                        <strong>Meier</strong>, Medina
-                    </div>
+                <div class="row" id="branches_footer_list">
+                    <%-branches_footer_list %>
                 </div>
-                
+
                 <p class="mb-1">&copy; 2018-2019 MYVTMI.IM</p>
-                <ul class="list-inline">                    
+                <ul class="list-inline">
                     <li class="list-inline-item"><a href="mailto:contato@myvtmi.im">Suporte</a></li>
                 </ul>
             </footer>
